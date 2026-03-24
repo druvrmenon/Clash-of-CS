@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 // ========================================================================= //
 // 🚀 GITHUB PAGES LEADERBOARD SETUP GUIDE 🚀
@@ -31,10 +31,33 @@ try {
     console.warn("⚠️ Firebase not configured cleanly yet. Please replace the config keys.");
 }
 
+let isAdmin = false;
+
 window.app.FirebaseLB = {
+    toggleAdmin: function () {
+        const pwd = prompt("Enter Admin Password:");
+        if (pwd === "Abhinavloveslatha") {
+            isAdmin = !isAdmin;
+            alert(isAdmin ? "Admin Mode Enabled" : "Admin Mode Disabled");
+            window.app.refreshLeaderboard();
+        } else if (pwd !== null) {
+            alert("Incorrect password.");
+        }
+    },
+    deleteScore: async function (docId) {
+        if (!isAdmin) return;
+        if (confirm(`Are you sure you want to delete ${docId}?`)) {
+            try {
+                await deleteDoc(doc(db, "leaderboard", docId));
+                window.app.refreshLeaderboard();
+            } catch (e) {
+                alert("Error deleting record.");
+            }
+        }
+    },
     publishScore: async function (username, totalXp, level, silent = false) {
         if (!db || firebaseConfig.apiKey === "YOUR_API_KEY") {
-            if(!silent) alert("Oops! The database isn't connected yet. Check scripts/firebase-leaderboard.js for instructions!");
+            if (!silent) alert("Oops! The database isn't connected yet. Check scripts/firebase-leaderboard.js for instructions!");
             return;
         }
 
@@ -42,7 +65,7 @@ window.app.FirebaseLB = {
             // Slugify username to use as a unique ID, so a user updates their own high score
             const docId = username.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
             if (!docId) {
-                if(!silent) alert("Please set a valid username in settings first!");
+                if (!silent) alert("Please set a valid username in settings first!");
                 return;
             }
 
@@ -53,11 +76,11 @@ window.app.FirebaseLB = {
                 updatedAt: new Date().toISOString()
             });
 
-            if(!silent) alert(`🎉 Success! Published ${totalXp} XP for ${username} to the Global Leaderboard!`);
+            if (!silent) alert(`🎉 Success! Published ${totalXp} XP for ${username} to the Global Leaderboard!`);
             window.app.refreshLeaderboard();
         } catch (e) {
             console.error("Error adding document: ", e);
-            if(!silent) alert("Error publishing score. Check the developer console.");
+            if (!silent) alert("Error publishing score. Check the developer console.");
         }
     },
 
@@ -84,12 +107,18 @@ window.app.FirebaseLB = {
             let rank = 1;
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
+                const docId = doc.id;
                 const row = document.createElement('div');
                 row.style.display = 'flex';
                 row.style.justifyContent = 'space-between';
                 row.style.alignItems = 'center';
                 row.style.padding = '12px 0';
                 row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+
+                let deleteBtnHtml = '';
+                if (isAdmin) {
+                    deleteBtnHtml = `<button class="icon-btn delete-btn" data-id="${docId}" style="color:var(--error); margin-left:10px;" title="Delete User"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>`;
+                }
 
                 row.innerHTML = `
                     <span style="width: 40px; font-weight:900; color: ${rank <= 3 ? '#ff8c00' : 'var(--accent-primary)'};">#${rank}</span>
@@ -98,10 +127,20 @@ window.app.FirebaseLB = {
                         <span style="font-size:0.75rem; background:var(--glass-border); padding:2px 6px; border-radius:10px; margin-left:6px;">Lv. ${data.level}</span>
                     </span>
                     <span style="font-weight:900; color:var(--text-primary); font-size:1.2rem;">${data.xp} <span style="font-size:0.8rem; color:var(--text-secondary);">XP</span></span>
+                    ${deleteBtnHtml}
                 `;
                 listEl.appendChild(row);
                 rank++;
             });
+
+            if (isAdmin) {
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        window.app.FirebaseLB.deleteScore(id);
+                    });
+                });
+            }
             if (querySnapshot.empty) {
                 listEl.innerHTML = '<div style="text-align:center; padding: 20px;">It\'s a ghost town here! Be the first to publish a score!</div>';
             }
@@ -121,6 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.sfx) window.sfx.click();
                 window.app.refreshLeaderboard();
                 window.app.switchView('leaderboard');
+            });
+        }
+
+        const btnAdmin = document.getElementById('btnAdminMode');
+        if (btnAdmin) {
+            btnAdmin.addEventListener('click', () => {
+                if (window.sfx) window.sfx.click();
+                window.app.FirebaseLB.toggleAdmin();
             });
         }
 

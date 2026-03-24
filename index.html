@@ -183,7 +183,10 @@
                 <div class="review-header glass-panel">
                     <button class="icon-btn" onclick="app.switchView('dashboard')"><i data-lucide="chevron-left"></i></button>
                     <h3 class="review-title">Global Leaderboard</h3>
-                    <button class="icon-btn" onclick="app.refreshLeaderboard()" title="Refresh"><i data-lucide="refresh-cw"></i></button>
+                    <div style="display:flex; gap:10px;">
+                        <button class="icon-btn" id="btnAdminMode" title="Admin Mode"><i data-lucide="shield"></i></button>
+                        <button class="icon-btn" onclick="app.refreshLeaderboard()" title="Refresh"><i data-lucide="refresh-cw"></i></button>
+                    </div>
                 </div>
                 <div class="leaderboard-container glass-panel" style="padding:20px;">
                     <div class="lb-headers" style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid var(--glass-border); padding-bottom:10px; margin-bottom:10px;">
