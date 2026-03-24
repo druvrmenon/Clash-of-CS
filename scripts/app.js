@@ -54,8 +54,7 @@ const app = {
         username: localStorage.getItem('cs_master_name') || 'Student',
         sfx: localStorage.getItem('cs_master_sfx') !== 'false',
         practice: localStorage.getItem('cs_master_prac') === 'true',
-        feedback: localStorage.getItem('cs_master_fb') !== 'false',
-        autoAdvanceDelay: parseInt(localStorage.getItem('cs_master_delay') || '3')
+        feedback: localStorage.getItem('cs_master_fb') !== 'false'
     },
     
     init: function() {
@@ -263,16 +262,6 @@ const app = {
             localStorage.setItem('cs_master_fb', this.settings.feedback);
         });
 
-        const autoAdvanceInput = document.getElementById('autoAdvanceInput');
-        if (autoAdvanceInput) {
-            autoAdvanceInput.addEventListener('change', (e) => {
-                let val = parseInt(e.target.value);
-                if (isNaN(val) || val < 0) val = 0;
-                this.settings.autoAdvanceDelay = val;
-                localStorage.setItem('cs_master_delay', this.settings.autoAdvanceDelay);
-            });
-        }
-
         document.getElementById('btnResetProgress').addEventListener('click', () => {
             sfx.click();
             if(confirm("Are you sure you want to reset EVERYTHING?")) {
@@ -372,8 +361,6 @@ const app = {
         document.getElementById('sfxToggle').checked = this.settings.sfx;
         document.getElementById('practiceToggle').checked = this.settings.practice;
         document.getElementById('feedbackToggle').checked = this.settings.feedback;
-        const autoAdvanceInput = document.getElementById('autoAdvanceInput');
-        if (autoAdvanceInput) autoAdvanceInput.value = this.settings.autoAdvanceDelay;
     },
 
     
@@ -670,13 +657,13 @@ const app = {
                 msg.className = 'feedback-message success';
                 msg.innerText = 'Correct! ' + (q.explanation || '');
                 
-                // User configurable auto-advance logic
-                if (this.settings.autoAdvanceDelay > 0) {
+                // Auto Advance for Tablet/Touch
+                if (window.innerWidth <= 1024) {
                     setTimeout(() => {
                         if(this.state.userAnswers[this.state.currentQuestionIndex] !== undefined && document.getElementById('quizActions').classList.contains('hidden') === false) {
                             this.nextQuestion();
                         }
-                    }, this.settings.autoAdvanceDelay * 1000);
+                    }, 3000);
                 }
             } else {
                 this.state.totalXP = Math.max(0, this.state.totalXP - 5);
