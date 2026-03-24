@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="claude">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>CS Master | Quiz & Practice</title>
+    <link rel="stylesheet" href="./styles/main.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="dynamic-background">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="icon-btn close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label>Username</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="usernameInput" class="custom-input" placeholder="Your Name">
+                        <button id="btnSaveName" class="btn-primary" style="padding: 8px 16px;">Save</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Sound Effects</label>
+                    <label class="switch">
+                        <input type="checkbox" id="sfxToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>Practice Mode (No Timer)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="practiceToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>Immediate Feedback</label>
+                    <label class="switch">
+                        <input type="checkbox" id="feedbackToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item" style="margin-top:20px; text-align:center;">
+                    <button id="btnResetProgress" class="btn-secondary" style="border-color:var(--error); color:var(--error);">Reset All Progress</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header glass-panel">
+            <div class="header-left">
+                <i data-lucide="book-open" class="header-icon"></i>
+                <h1>CS Master</h1>
+            </div>
+            <div class="header-right" style="display:flex; gap:10px;">
+                <button id="btnLeaderboardMenu" class="icon-btn" aria-label="Leaderboard" title="Leaderboard">
+                    <i data-lucide="trophy"></i>
+                </button>
+                <button id="btnBookmarksMenu" class="icon-btn" aria-label="Bookmarks" title="Bookmarks">
+                    <i data-lucide="bookmark"></i>
+                </button>
+                <button id="btnSettings" class="icon-btn" aria-label="Settings" title="Settings">
+                    <i data-lucide="settings"></i>
+                </button>
+                <button id="themeToggleBtn" class="icon-btn" aria-label="Switch Theme" title="Theme">
+                    <i data-lucide="palette"></i>
+                </button>
+            </div>
+            
+            <div id="themeMenu" class="theme-menu glass-panel hidden">
+                <button class="theme-option" data-set-theme="claude">Classic</button>
+                <button class="theme-option" data-set-theme="cyberpunk">Cyberpunk</button>
+                <button class="theme-option" data-set-theme="ocean">Ocean Depth</button>
+                <button class="theme-option" data-set-theme="nature">Forest Night</button>
+                <button class="theme-option" data-set-theme="sunset">Sunset Glow</button>
+            </div>
+        </header>
+
+        <main id="mainContent" class="main-content">
+            <!-- Dashboard View -->
+            <section id="dashboardView" class="view-section active animate-fade-in">
+                <div class="dashboard-hero">
+                    <h2 class="hero-title">Welcome, <span id="displayUsername">Student</span>!</h2>
+                    <p class="hero-subtitle">Level <span id="userLevel">1</span> • Best Score: <span id="globalHighscore">0</span></p>
+                </div>
+
+                <div class="stats-row glass-panel" style="flex-wrap: wrap;">
+                    <div class="stat-item">
+                        <i data-lucide="flame" class="stat-icon streak-icon"></i>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statStreak">0</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <i data-lucide="award" class="stat-icon score-icon"></i>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statScore">0</span>
+                            <span class="stat-label">Total XP</span>
+                        </div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <i data-lucide="target" class="stat-icon" style="color:#00f0ff;"></i>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dailyGoal">0/1</span>
+                            <span class="stat-label">Daily Goal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="xp-bar-container">
+                    <div class="xp-bar-fill" id="xpProgress"></div>
+                </div>
+                <div class="xp-text" style="text-align:center; font-size:0.8rem; color:var(--text-secondary); margin-bottom:var(--spacing-lg);">
+                    <span id="xpToNextBlock">XP to next level: <span id="xpToNext">100</span></span>
+                </div>
+
+                <div class="dashboard-controls" style="margin-bottom: var(--spacing-md); display:flex; gap:10px;">
+                    <input type="text" id="moduleSearch" class="custom-input" placeholder="Search modules..." style="flex:1;">
+                </div>
+
+                <h3 class="section-heading">Study Modules</h3>
+                <div class="module-grid" id="moduleGrid"></div>
+            </section>
+
+            
+            <!-- Leaderboard View -->
+            <section id="leaderboardView" class="view-section hidden animate-fade-in">
+                <div class="review-header glass-panel">
+                    <button class="icon-btn" onclick="app.switchView('dashboard')"><i data-lucide="chevron-left"></i></button>
+                    <h3 class="review-title">Global Leaderboard</h3>
+                    <button class="icon-btn" onclick="app.refreshLeaderboard()" title="Refresh"><i data-lucide="refresh-cw"></i></button>
+                </div>
+                <div class="leaderboard-container glass-panel" style="padding:20px;">
+                    <div class="lb-headers" style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid var(--glass-border); padding-bottom:10px; margin-bottom:10px;">
+                        <span>Rank</span>
+                        <span style="flex:1; margin-left:20px;">Player</span>
+                        <span>Total XP</span>
+                    </div>
+                    <div id="leaderboardList" style="display:flex; flex-direction:column; gap:10px; max-height:400px; overflow-y:auto;">
+                        <div style="text-align:center; padding:20px; color:var(--text-secondary);">Loading leaderboard...</div>
+                    </div>
+                    <div style="margin-top:20px; text-align:center;">
+                        <button id="btnSubmitScore" class="btn-primary" style="margin: 0 auto;">Publish My Score</button>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:10px;">Saves your current Total XP to the global board!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bookmarks View -->
+            <section id="bookmarksView" class="view-section hidden animate-fade-in">
+                <div class="review-header glass-panel">
+                    <button class="icon-btn" onclick="app.switchView('dashboard')"><i data-lucide="chevron-left"></i></button>
+                    <h3 class="review-title">Bookmarked Questions</h3>
+                    <button id="btnClearBookmarks" class="icon-btn" style="color:var(--error);" title="Clear All"><i data-lucide="trash-2"></i></button>
+                </div>
+                <div class="review-container" id="bookmarksContainer"></div>
+            </section>
+
+            <!-- Quiz View -->
+            <section id="quizView" class="view-section hidden">
+                <div class="quiz-header">
+                    <button id="btnBackDashboard" class="icon-btn"><i data-lucide="chevron-left"></i></button>
+                    <div class="quiz-title-area">
+                        <h3 id="quizTitle">Topic</h3>
+                        <div class="quiz-progress-text">Question <span id="currentQNum">1</span> / <span id="totalQNum">10</span></div>
+                    </div>
+                    <div class="quiz-timer" id="quizTimer">02:30</div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-fill" id="quizProgressFill"></div>
+                </div>
+
+                <div class="quiz-tools glass-panel" style="display:flex; justify-content:space-around; padding:8px; margin-bottom:10px; border-radius:var(--border-radius-sm);">
+                    <button id="btnPause" class="icon-btn" title="Pause"><i data-lucide="pause"></i></button>
+                    <button id="btnLifeline" class="icon-btn" title="50/50 Lifeline"><i data-lucide="scissors"></i></button>
+                    <button id="btnBookmark" class="icon-btn" title="Bookmark"><i data-lucide="bookmark"></i></button>
+                    <button id="btnSkip" class="icon-btn" title="Skip Question"><i data-lucide="fast-forward"></i></button>
+                </div>
+
+                <div id="pauseOverlay" class="hidden glass-panel" style="text-align:center; padding: 40px; margin-bottom: 20px;">
+                    <h2>Paused</h2>
+                    <br>
+                    <button id="btnResume" class="btn-primary" style="margin:0 auto;">Resume</button>
+                </div>
+
+                <div class="question-card glass-panel" id="questionCardWrap">
+                    <div style="font-size:0.8rem; color:var(--accent-primary); font-weight:bold; margin-bottom:10px; text-transform:uppercase;" id="qCategoryTag">#Category</div>
+                    <p class="question-text" id="questionText">Loading...</p>
+                    <div class="options-container" id="optionsContainer"></div>
+                </div>
+
+                <div class="keyboard-hints" style="text-align:center; font-size:0.8rem; color:var(--text-secondary); margin-top:10px;">
+                    Keyboard: 1, 2, 3, 4 (or A, B, C, D) to select | Space/Enter for Next
+                </div>
+
+                <div class="quiz-actions hidden" id="quizActions" style="margin-top:20px;">
+                    <div class="feedback-message" id="feedbackMessage"></div>
+                    <button id="btnNextQuestion" class="btn-primary">Next <i data-lucide="arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- Results View -->
+            <section id="resultsView" class="view-section hidden">
+                <div class="results-card glass-panel animate-pop-in">
+                    <i data-lucide="check-circle" class="result-icon success"></i>
+                    <h2>Quiz Completed!</h2>
+                    <div class="score-display">
+                        <span id="finalScoreText">8/10</span>
+                        <div class="score-label">Correct Answers</div>
+                    </div>
+                    <div class="xp-gain">+<span id="xpGainedText">80</span> XP</div>
+                    
+                    <div class="results-actions">
+                        <button id="btnReviewMistakes" class="btn-secondary">Review</button>
+                        <button id="btnShareScore" class="btn-secondary"><i data-lucide="share-2"></i> Share</button>
+                        <button id="btnReturnHome" class="btn-primary">Home</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Review View -->
+            <section id="reviewView" class="view-section hidden">
+                <div class="review-header glass-panel">
+                    <button id="btnBackToResults" class="icon-btn"><i data-lucide="chevron-left"></i></button>
+                    <h3 class="review-title">Review Answers</h3>
+                    <div style="width: 40px;"></div>
+                </div>
+                <div class="review-container" id="reviewContainer"></div>
+                <div class="review-footer">
+                    <button id="btnFinishReview" class="btn-primary">Back to Dashboard</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="./scripts/data.js"></script>
+    <script src="./scripts/app.js"></script>
+    <script type="module" src="./scripts/firebase-leaderboard.js"></script>
+</body>
+</html>
