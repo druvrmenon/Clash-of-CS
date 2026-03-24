@@ -1342,3 +1342,49 @@ button:focus-visible, input:focus-visible, a:focus-visible {
         font-size: 0.65rem;
     }
 }
+
+/* Question Palette Elements */
+.palette-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-sm);
+    border: 2px solid var(--glass-border);
+    background: rgba(0,0,0,0.3);
+    color: var(--text-secondary);
+    font-weight: bold;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.palette-btn:hover {
+    border-color: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+.palette-btn.current {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+    box-shadow: 0 0 10px var(--accent-primary);
+}
+
+.palette-btn.correct {
+    background: var(--success);
+    border-color: var(--success);
+    color: var(--bg-main);
+}
+
+.palette-btn.wrong {
+    background: var(--error);
+    border-color: var(--error);
+    color: white;
+}
+
+.palette-btn.skipped {
+    background: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    color: var(--bg-main);
+}

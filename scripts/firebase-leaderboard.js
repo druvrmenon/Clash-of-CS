@@ -32,16 +32,19 @@ try {
 }
 
 window.app.FirebaseLB = {
-    publishScore: async function (username, totalXp, level) {
+    publishScore: async function (username, totalXp, level, silent = false) {
         if (!db || firebaseConfig.apiKey === "YOUR_API_KEY") {
-            alert("Oops! The database isn't connected yet. Check scripts/firebase-leaderboard.js for instructions!");
+            if(!silent) alert("Oops! The database isn't connected yet. Check scripts/firebase-leaderboard.js for instructions!");
             return;
         }
 
         try {
             // Slugify username to use as a unique ID, so a user updates their own high score
             const docId = username.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-            if (!docId) return alert("Please set a valid username in settings first!");
+            if (!docId) {
+                if(!silent) alert("Please set a valid username in settings first!");
+                return;
+            }
 
             await setDoc(doc(db, "leaderboard", docId), {
                 name: username,
@@ -50,11 +53,11 @@ window.app.FirebaseLB = {
                 updatedAt: new Date().toISOString()
             });
 
-            alert(`🎉 Success! Published ${totalXp} XP for ${username} to the Global Leaderboard!`);
+            if(!silent) alert(`🎉 Success! Published ${totalXp} XP for ${username} to the Global Leaderboard!`);
             window.app.refreshLeaderboard();
         } catch (e) {
             console.error("Error adding document: ", e);
-            alert("Error publishing score. Check the developer console.");
+            if(!silent) alert("Error publishing score. Check the developer console.");
         }
     },
 

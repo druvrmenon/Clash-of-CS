@@ -44,7 +44,7 @@ const app = {
         timerInterval: null,
         timeLeft: 0,
         isPaused: false,
-        lifelineUsed: false,
+        lifelinesRemaining: 3,
         dailyCompleted: parseInt(localStorage.getItem('cs_master_daily') || '0'),
         dailyDate: localStorage.getItem('cs_master_date') || new Date().toDateString(),
         bookmarks: JSON.parse(localStorage.getItem('cs_master_bookmarks') || '[]'),
@@ -398,7 +398,20 @@ const app = {
     },
 
     startModule: function(id) {
-        this.state.currentModule = mockModules.find(m => m.id === id);
+        const originalMod = mockModules.find(m => m.id === id);
+        const modCopy = JSON.parse(JSON.stringify(originalMod));
+        
+        // Shuffle questions
+        modCopy.questions.sort(() => Math.random() - 0.5);
+
+        // Shuffle options and fix correctAnswer index
+        modCopy.questions.forEach(q => {
+            const correctText = q.options[q.correctAnswer];
+            q.options.sort(() => Math.random() - 0.5);
+            q.correctAnswer = q.options.indexOf(correctText);
+        });
+
+        this.state.currentModule = modCopy;
         this.startQuizSession();
     },
 
@@ -406,7 +419,16 @@ const app = {
         let all = [];
         mockModules.forEach(m => all = all.concat(m.questions));
         all.sort(() => 0.5 - Math.random());
-        this.state.currentModule = { title: "Random Mix", icon: "shuffle", questions: all.slice(0, count) };
+        
+        const mixMod = { title: "Random Mix", icon: "shuffle", questions: JSON.parse(JSON.stringify(all.slice(0, count))) };
+        // Shuffle options
+        mixMod.questions.forEach(q => {
+            const correctText = q.options[q.correctAnswer];
+            q.options.sort(() => Math.random() - 0.5);
+            q.correctAnswer = q.options.indexOf(correctText);
+        });
+
+        this.state.currentModule = mixMod;
         this.startQuizSession();
     },
 
@@ -414,8 +436,11 @@ const app = {
         this.state.currentQuestionIndex = 0;
         this.state.score = 0;
         this.state.userAnswers = [];
-        this.state.lifelineUsed = false;
+        this.state.lifelinesRemaining = 3;
         this.state.isPaused = false;
+        
+        const countEl = document.getElementById('lifelineCount');
+        if (countEl) countEl.innerText = this.state.lifelinesRemaining;
         
         // Multiplayer Reset
         if (multiplayer.battleActive) {
@@ -440,6 +465,19 @@ const app = {
         } else {
             document.getElementById('btnPause').classList.remove('hidden');
             this.startTimer(qCount * 30);
+        }
+        
+        // Generate Palette
+        const palette = document.getElementById('questionPalette');
+        if (palette) {
+            palette.innerHTML = '';
+            this.state.currentModule.questions.forEach((_, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'palette-btn';
+                btn.id = `paletteBtn_${idx}`;
+                btn.innerText = idx + 1;
+                palette.appendChild(btn);
+            });
         }
         
         this.switchView('quiz');
@@ -543,6 +581,15 @@ const app = {
         
         document.getElementById('quizActions').classList.add('hidden');
         lucide.createIcons();
+
+        // Update Palette Active State
+        if (document.getElementById('questionPalette')) {
+            document.querySelectorAll('.palette-btn').forEach(btn => btn.classList.remove('current'));
+            const curP = document.getElementById(`paletteBtn_${this.state.currentQuestionIndex}`);
+            if(curP) curP.classList.add('current');
+        }
+        
+        document.getElementById('btnLifeline').disabled = this.state.lifelinesRemaining <= 0;
     },
 
     selectOption: function(selectedIdx) {
@@ -570,12 +617,27 @@ const app = {
             
             if(isCorrect) {
                 this.state.score++;
+                this.state.totalXP += 10;
                 msg.className = 'feedback-message success';
                 msg.innerText = 'Correct! ' + (q.explanation || '');
+                
+                // Auto Advance for Tablet/Touch
+                if (window.innerWidth <= 1024) {
+                    setTimeout(() => {
+                        if(this.state.userAnswers[this.state.currentQuestionIndex] !== undefined && document.getElementById('quizActions').classList.contains('hidden') === false) {
+                            this.nextQuestion();
+                        }
+                    }, 3000);
+                }
             } else {
+                this.state.totalXP = Math.max(0, this.state.totalXP - 5);
                 msg.className = 'feedback-message error';
                 msg.innerText = 'Incorrect. ' + (q.explanation || '');
             }
+
+            // Update palette
+            const pBtn = document.getElementById(`paletteBtn_${this.state.currentQuestionIndex}`);
+            if (pBtn) pBtn.classList.add(isCorrect ? 'correct' : 'wrong');
 
             // Multiplayer Sync
             if (multiplayer.battleActive) {
@@ -585,17 +647,36 @@ const app = {
             }
         } else {
             // No feedback until end
-            if(selectedIdx === q.correctAnswer) this.state.score++;
+            if(selectedIdx === q.correctAnswer) {
+                this.state.score++;
+                this.state.totalXP += 10;
+            } else {
+                this.state.totalXP = Math.max(0, this.state.totalXP - 5);
+            }
+            
+            const pBtn = document.getElementById(`paletteBtn_${this.state.currentQuestionIndex}`);
+            if(pBtn) pBtn.classList.add('skipped'); // reusing neutral color for 'answered'
+
             document.getElementById(`optBtn_${selectedIdx}`).classList.add('selected');
             document.getElementById('quizActions').classList.remove('hidden');
             document.getElementById('feedbackMessage').innerText = "Answer recorded.";
             document.getElementById('feedbackMessage').className = 'feedback-message';
+        }
+
+        this.saveState();
+        // Silently sync XP
+        if(window.app.FirebaseLB && window.db) {
+            window.app.FirebaseLB.publishScore(this.settings.username, this.state.totalXP, this.state.level, true);
         }
     },
 
     skipQuestion: function() {
         if(this.state.userAnswers[this.state.currentQuestionIndex] !== undefined) return;
         this.state.userAnswers[this.state.currentQuestionIndex] = 'skipped';
+        
+        const pBtn = document.getElementById(`paletteBtn_${this.state.currentQuestionIndex}`);
+        if(pBtn) pBtn.classList.add('skipped');
+
         this.nextQuestion();
     },
 
@@ -610,9 +691,15 @@ const app = {
     },
 
     useLifeline: function() {
-        if(this.state.lifelineUsed || this.state.userAnswers[this.state.currentQuestionIndex] !== undefined) return;
-        this.state.lifelineUsed = true;
-        document.getElementById('btnLifeline').disabled = true;
+        if(this.state.lifelinesRemaining <= 0 || this.state.userAnswers[this.state.currentQuestionIndex] !== undefined) return;
+        this.state.lifelinesRemaining--;
+        
+        const countEl = document.getElementById('lifelineCount');
+        if (countEl) countEl.innerText = this.state.lifelinesRemaining;
+
+        if (this.state.lifelinesRemaining <= 0) {
+            document.getElementById('btnLifeline').disabled = true;
+        }
         
         const q = this.state.currentModule.questions[this.state.currentQuestionIndex];
         const wrongIndices = [];
@@ -651,12 +738,11 @@ const app = {
         const correctAnswers = this.state.score;
         const wrongAnswers = totalQ - correctAnswers;
         
-        // XP Calculation: +10 for correct, -5 for incorrect
+        // XP Calculation for display in Results panel
         const xpEarned = correctAnswers * 10;
         const xpPenalty = wrongAnswers * 5;
-        const netXP = Math.max(-50, xpEarned - xpPenalty); // Minimum -50 per module
+        const netXP = Math.max(-50, xpEarned - xpPenalty); 
         
-        this.state.totalXP = Math.max(0, this.state.totalXP + netXP); // Total XP cannot be negative
         if(this.state.score === totalQ && totalQ > 0) this.state.streak++; else this.state.streak = 0;
         
         this.state.dailyCompleted += 1;

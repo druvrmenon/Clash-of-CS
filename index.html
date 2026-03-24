@@ -228,7 +228,10 @@
 
                 <div class="quiz-tools glass-panel" style="display:flex; justify-content:space-around; padding:8px; margin-bottom:10px; border-radius:var(--border-radius-sm);">
                     <button id="btnPause" class="icon-btn" title="Pause"><i data-lucide="pause"></i></button>
-                    <button id="btnLifeline" class="icon-btn" title="50/50 Lifeline"><i data-lucide="scissors"></i></button>
+                    <button id="btnLifeline" class="icon-btn" title="50/50 Lifeline" style="position:relative;">
+                        <i data-lucide="scissors"></i>
+                        <span id="lifelineCount" style="position:absolute; top:-5px; right:-5px; background:var(--accent-primary); color:white; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:10px;">3</span>
+                    </button>
                     <button id="btnBookmark" class="icon-btn" title="Bookmark"><i data-lucide="bookmark"></i></button>
                     <button id="btnSkip" class="icon-btn" title="Skip Question"><i data-lucide="fast-forward"></i></button>
                 </div>
@@ -252,6 +255,10 @@
                 <div class="quiz-actions hidden" id="quizActions" style="margin-top:20px;">
                     <div class="feedback-message" id="feedbackMessage"></div>
                     <button id="btnNextQuestion" class="btn-primary">Next <i data-lucide="arrow-right"></i></button>
+                </div>
+
+                <div id="questionPalette" class="question-palette" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:30px; padding-top:20px; border-top:1px solid var(--glass-border);">
+                    <!-- Palette Buttons Generated Here -->
                 </div>
             </section>
 
