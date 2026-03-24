@@ -59,6 +59,7 @@ const app = {
     
     init: function() {
         lucide.createIcons();
+        this.overrideAlertWithToast();
         this.checkDaily();
         this.updateLevel();
         this.bindEvents();
@@ -68,6 +69,53 @@ const app = {
         // Theme init
         let currentTheme = localStorage.getItem('cs_master_theme') || 'claude';
         document.documentElement.setAttribute('data-theme', currentTheme);
+        this.initParallax();
+        this.initScrollListener();
+    },
+
+    overrideAlertWithToast: function() {
+        window.alert = (msg) => {
+            app.showToast(msg);
+        };
+    },
+
+    showToast: function(message) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<i data-lucide="info" style="color:var(--accent-primary)"></i> <span>${message}</span>`;
+        container.appendChild(toast);
+        lucide.createIcons();
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => toast.classList.add('show'));
+        });
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    },
+
+    initParallax: function() {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            const b1 = document.getElementById('blob1');
+            const b2 = document.getElementById('blob2');
+            const b3 = document.getElementById('blob3');
+            if(b1) b1.style.transform = `translate(${x * 30}px, ${y * 30}px) scale(1)`;
+            if(b2) b2.style.transform = `translate(${x * -40}px, ${y * -40}px) scale(1.1)`;
+            if(b3) b3.style.transform = `translate(${x * 20}px, ${y * -20}px) scale(0.95)`;
+        });
+    },
+
+    initScrollListener: function() {
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.app-header');
+            if(window.scrollY > 20) header.classList.add('sticky');
+            else header.classList.remove('sticky');
+        });
     },
 
     bindEvents: function() {
@@ -82,10 +130,24 @@ const app = {
         document.querySelectorAll('.theme-option').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const theme = e.target.getAttribute('data-set-theme');
+                document.documentElement.classList.remove('theme-flash');
+                void document.documentElement.offsetWidth; // trigger reflow
+                document.documentElement.classList.add('theme-flash');
                 document.documentElement.setAttribute('data-theme', theme);
                 localStorage.setItem('cs_master_theme', theme);
             });
         });
+
+        // Mobile FAB
+        const fab = document.getElementById('mobileFab');
+        const fabMain = fab.querySelector('.fab-main');
+        fabMain.addEventListener('click', (e) => { e.stopPropagation(); fab.classList.toggle('open'); });
+        document.addEventListener('click', () => { fab.classList.remove('open'); });
+        
+        document.getElementById('fabLeaderboard').addEventListener('click', () => { document.getElementById('btnLeaderboardMenu').click(); });
+        document.getElementById('fabBookmarks').addEventListener('click', () => { document.getElementById('btnBookmarksMenu').click(); });
+        document.getElementById('fabSettings').addEventListener('click', () => { document.getElementById('btnSettings').click(); });
+        document.getElementById('fabTheme').addEventListener('click', (e) => { document.getElementById('themeToggleBtn').click(); e.stopPropagation(); });
 
         // Settings Modal
         document.getElementById('btnSettings').addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.remove('hidden'); });
@@ -363,7 +425,27 @@ const app = {
         document.getElementById('quizProgressFill').style.width = `${(this.state.currentQuestionIndex / total) * 100}%`;
         
         document.getElementById('qCategoryTag').innerHTML = `<i data-lucide="hash" style="width:14px;height:14px;"></i> ${this.state.currentModule.title || 'Topic'}`;
-        document.getElementById('questionText').innerText = q.text;
+        
+        // 3D Flip animation
+        const qCard = document.getElementById('questionCardWrap');
+        qCard.classList.remove('animate-flip-in');
+        void qCard.offsetWidth; // reflow
+        qCard.classList.add('animate-flip-in');
+        
+        // Typewriter Effect
+        const qText = document.getElementById('questionText');
+        qText.innerText = '';
+        qText.classList.add('typewriter');
+        let typeIdx = 0;
+        clearInterval(this.state.typeInterval);
+        this.state.typeInterval = setInterval(() => {
+            qText.innerText += q.text.charAt(typeIdx);
+            typeIdx++;
+            if(typeIdx >= q.text.length) {
+                clearInterval(this.state.typeInterval);
+                qText.classList.remove('typewriter');
+            }
+        }, 15);
         
         this.updateBookmarkIcon();
         
@@ -373,7 +455,7 @@ const app = {
         
         q.options.forEach((opt, idx) => {
             const b = document.createElement('button');
-            b.className = 'option-btn';
+            b.className = 'option-btn ripple-fx';
             b.id = `optBtn_${idx}`;
             b.innerHTML = `<span class="option-letter">${labels[idx]}</span><span class="option-text">${opt}</span>`;
             b.addEventListener('click', () => { sfx.click(); this.selectOption(idx); });
@@ -489,14 +571,21 @@ const app = {
         if(this.state.score > this.state.highscore) this.state.highscore = this.state.score;
         this.saveState();
         
-        document.getElementById('quizProgressFill').style.width = `100%`;
+        const circle = document.getElementById('finalScoreCircle');
+        const percentage = totalQ === 0 ? 0 : (this.state.score / totalQ) * 100;
+        circle.style.animation = 'none';
+        void circle.offsetWidth;
+        setTimeout(() => {
+            circle.style.animation = '';
+            circle.style.strokeDasharray = `${percentage}, 100`;
+        }, 50);
         document.getElementById('finalScoreText').innerText = `${this.state.score}/${totalQ}`;
         document.getElementById('xpGainedText').innerText = xpEarned;
         
         const icon = document.querySelector('.result-icon');
         if(this.state.score === totalQ) {
             icon.setAttribute('data-lucide', 'award');
-            icon.className = 'result-icon success';
+            icon.className = 'result-icon success streak-active';
             if(this.settings.sfx) triggerConfetti();
         } else if(this.state.score >= totalQ / 2) {
             icon.setAttribute('data-lucide', 'check-circle');

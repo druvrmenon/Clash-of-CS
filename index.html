@@ -10,11 +10,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="dynamic-background">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+    <div class="dynamic-background" id="dynamicBg">
+        <div class="blob blob-1" id="blob1"></div>
+        <div class="blob blob-2" id="blob2"></div>
+        <div class="blob blob-3" id="blob3"></div>
     </div>
+    <div class="noise-overlay"></div>
 
     <!-- Modals -->
     <div id="settingsModal" class="modal hidden">
@@ -86,6 +87,16 @@
                 <button class="theme-option" data-set-theme="ocean">Ocean Depth</button>
                 <button class="theme-option" data-set-theme="nature">Forest Night</button>
                 <button class="theme-option" data-set-theme="sunset">Sunset Glow</button>
+            </div>
+            
+            <div class="fab-container" id="mobileFab">
+                <button class="fab-main"><i data-lucide="menu"></i></button>
+                <div class="fab-menu">
+                    <button id="fabLeaderboard" class="icon-btn" aria-label="Leaderboard"><i data-lucide="trophy"></i></button>
+                    <button id="fabBookmarks" class="icon-btn" aria-label="Bookmarks"><i data-lucide="bookmark"></i></button>
+                    <button id="fabSettings" class="icon-btn" aria-label="Settings"><i data-lucide="settings"></i></button>
+                    <button id="fabTheme" class="icon-btn" aria-label="Theme"><i data-lucide="palette"></i></button>
+                </div>
             </div>
         </header>
 
@@ -222,7 +233,11 @@
                     <i data-lucide="check-circle" class="result-icon success"></i>
                     <h2>Quiz Completed!</h2>
                     <div class="score-display">
-                        <span id="finalScoreText">8/10</span>
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" id="finalScoreCircle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage" id="finalScoreText">8/10</text>
+                        </svg>
                         <div class="score-label">Correct Answers</div>
                     </div>
                     <div class="xp-gain">+<span id="xpGainedText">80</span> XP</div>
@@ -250,6 +265,7 @@
         </main>
     </div>
 
+    <div class="toast-container" id="toastContainer"></div>
     <script src="./scripts/data.js"></script>
     <script src="./scripts/app.js"></script>
     <script type="module" src="./scripts/firebase-leaderboard.js"></script>
