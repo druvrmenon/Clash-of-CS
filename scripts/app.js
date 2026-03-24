@@ -145,8 +145,8 @@ const app = {
         const themeMenu = document.getElementById('themeMenu');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         
-        themeToggleBtn.addEventListener('click', this.toggleThemeMenu.bind(this));
-        document.addEventListener('click', () => themeMenu.classList.add('hidden'));
+        if (themeToggleBtn) themeToggleBtn.addEventListener('click', this.toggleThemeMenu.bind(this));
+        if (themeMenu) document.addEventListener('click', () => themeMenu.classList.add('hidden'));
 
         document.querySelectorAll('.theme-option').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -163,14 +163,23 @@ const app = {
 
         // Mobile FAB
         const fab = document.getElementById('mobileFab');
-        const fabMain = fab.querySelector('.fab-main');
-        fabMain.addEventListener('click', (e) => { e.stopPropagation(); fab.classList.toggle('open'); });
-        document.addEventListener('click', () => { if(fab) fab.classList.remove('open'); });
-        
-        document.getElementById('fabLeaderboard').addEventListener('click', () => { document.getElementById('btnLeaderboardMenu').click(); });
-        document.getElementById('fabBookmarks').addEventListener('click', () => { document.getElementById('btnBookmarksMenu').click(); });
-        document.getElementById('fabSettings').addEventListener('click', () => { document.getElementById('btnSettings').click(); });
-        document.getElementById('fabTheme').addEventListener('click', (e) => { this.toggleThemeMenu(e); });
+        if (fab) {
+            const fabMain = fab.querySelector('.fab-main');
+            if (fabMain) fabMain.addEventListener('click', (e) => { e.stopPropagation(); fab.classList.toggle('open'); });
+            document.addEventListener('click', () => { fab.classList.remove('open'); });
+            
+            const btnFabLead = document.getElementById('fabLeaderboard');
+            if(btnFabLead) btnFabLead.addEventListener('click', () => { document.getElementById('btnLeaderboardMenu').click(); });
+            
+            const btnFabBook = document.getElementById('fabBookmarks');
+            if(btnFabBook) btnFabBook.addEventListener('click', () => { document.getElementById('btnBookmarksMenu').click(); });
+            
+            const btnFabSet = document.getElementById('fabSettings');
+            if(btnFabSet) btnFabSet.addEventListener('click', () => { document.getElementById('btnSettings').click(); });
+            
+            const btnFabTheme = document.getElementById('fabTheme');
+            if(btnFabTheme) btnFabTheme.addEventListener('click', (e) => { this.toggleThemeMenu(e); });
+        }
 
         // Multiplayer Events
         const battleModal = document.getElementById('battleModal');
@@ -219,20 +228,30 @@ const app = {
         });
 
         // Settings Modal
-        document.getElementById('btnSettings').addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.remove('hidden'); });
-        document.querySelector('.close-modal').addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.add('hidden'); });
+        const btnSettings = document.getElementById('btnSettings');
+        if (btnSettings) btnSettings.addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.remove('hidden'); });
         
-        document.getElementById('btnSaveName').addEventListener('click', () => {
-            sfx.click();
-            this.settings.username = document.getElementById('usernameInput').value || 'Student';
-            localStorage.setItem('cs_master_name', this.settings.username);
-            this.initDashboard();
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => { sfx.click(); btn.closest('.modal').classList.add('hidden'); });
         });
+        
+        const btnSaveName = document.getElementById('btnSaveName');
+        if (btnSaveName) {
+            btnSaveName.addEventListener('click', () => {
+                sfx.click();
+                this.settings.username = document.getElementById('usernameInput').value || 'Student';
+                localStorage.setItem('cs_master_name', this.settings.username);
+                this.initDashboard();
+            });
+        }
 
-        document.getElementById('sfxToggle').addEventListener('change', (e) => {
-            this.settings.sfx = e.target.checked;
-            localStorage.setItem('cs_master_sfx', this.settings.sfx);
-        });
+        const sfxToggle = document.getElementById('sfxToggle');
+        if (sfxToggle) {
+            sfxToggle.addEventListener('change', (e) => {
+                this.settings.sfx = e.target.checked;
+                localStorage.setItem('cs_master_sfx', this.settings.sfx);
+            });
+        }
 
         document.getElementById('practiceToggle').addEventListener('change', (e) => {
             this.settings.practice = e.target.checked;
@@ -263,13 +282,15 @@ const app = {
         });
 
         // Bookmarks
-        document.getElementById('btnBookmarksMenu').addEventListener('click', () => {
+        const btnBook = document.getElementById('btnBookmarksMenu');
+        if (btnBook) btnBook.addEventListener('click', () => {
             sfx.click();
             this.renderBookmarks();
             this.switchView('bookmarks');
         });
 
-        document.getElementById('btnClearBookmarks').addEventListener('click', () => {
+        const btnClearBook = document.getElementById('btnClearBookmarks');
+        if (btnClearBook) btnClearBook.addEventListener('click', () => {
             if(confirm("Clear all bookmarks?")) {
                 this.state.bookmarks = [];
                 this.saveState();
@@ -278,29 +299,44 @@ const app = {
         });
 
         // Dashboard Search
-        document.getElementById('moduleSearch').addEventListener('input', (e) => this.initDashboard(e.target.value));
+        const searchBox = document.getElementById('moduleSearch');
+        if (searchBox) searchBox.addEventListener('input', (e) => this.initDashboard(e.target.value));
 
         // Quiz Actions
-        document.getElementById('btnBackDashboard').addEventListener('click', () => { sfx.click(); this.stopTimer(); this.switchView('dashboard'); });
-        document.getElementById('btnNextQuestion').addEventListener('click', () => { sfx.click(); this.nextQuestion(); });
-        document.getElementById('btnPause').addEventListener('click', () => { sfx.click(); this.togglePause(); });
-        document.getElementById('btnResume').addEventListener('click', () => { sfx.click(); this.togglePause(); });
-        document.getElementById('btnSkip').addEventListener('click', () => { sfx.skip(); this.skipQuestion(); });
-        document.getElementById('btnBookmark').addEventListener('click', () => { sfx.click(); this.toggleBookmark(); });
-        document.getElementById('btnLifeline').addEventListener('click', () => { sfx.click(); this.useLifeline(); });
+        const binds = [
+            { id: 'btnBackDashboard', action: () => { sfx.click(); this.stopTimer(); this.switchView('dashboard'); } },
+            { id: 'btnNextQuestion', action: () => { sfx.click(); this.nextQuestion(); } },
+            { id: 'btnPause', action: () => { sfx.click(); this.togglePause(); } },
+            { id: 'btnResume', action: () => { sfx.click(); this.togglePause(); } },
+            { id: 'btnSkip', action: () => { sfx.skip(); this.skipQuestion(); } },
+            { id: 'btnBookmark', action: () => { sfx.click(); this.toggleBookmark(); } },
+            { id: 'btnLifeline', action: () => { sfx.click(); this.useLifeline(); } }
+        ];
 
-        // Results
-        document.getElementById('btnReviewMistakes').addEventListener('click', () => { sfx.click(); this.renderReview(); this.switchView('review'); });
-        document.getElementById('btnReturnHome').addEventListener('click', () => { sfx.click(); this.initDashboard(); this.switchView('dashboard'); });
-        document.getElementById('btnShareScore').addEventListener('click', () => {
+        binds.forEach(b => {
+            const el = document.getElementById(b.id);
+            if(el) el.addEventListener('click', b.action);
+        });
+
+        // Results & Review
+        const btnRevMistakes = document.getElementById('btnReviewMistakes');
+        if (btnRevMistakes) btnRevMistakes.addEventListener('click', () => { sfx.click(); this.renderReview(); this.switchView('review'); });
+        
+        const btnRetHome = document.getElementById('btnReturnHome');
+        if (btnRetHome) btnRetHome.addEventListener('click', () => { sfx.click(); this.initDashboard(); this.switchView('dashboard'); });
+        
+        const btnShare = document.getElementById('btnShareScore');
+        if (btnShare) btnShare.addEventListener('click', () => {
             sfx.click();
             const text = `I just scored ${this.state.score}/${this.state.currentModule.questions.length} on CS Master: ${this.state.currentModule.title}!`;
             navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
         });
 
-        // Review Back
-        document.getElementById('btnBackToResults').addEventListener('click', () => { sfx.click(); this.switchView('results'); });
-        document.getElementById('btnFinishReview').addEventListener('click', () => { sfx.click(); this.initDashboard(); this.switchView('dashboard'); });
+        const btnBackToRe = document.getElementById('btnBackToResults');
+        if (btnBackToRe) btnBackToRe.addEventListener('click', () => { sfx.click(); this.switchView('results'); });
+        
+        const btnFinRev = document.getElementById('btnFinishReview');
+        if (btnFinRev) btnFinRev.addEventListener('click', () => { sfx.click(); this.initDashboard(); this.switchView('dashboard'); });
 
         // Global Keyboard Shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
