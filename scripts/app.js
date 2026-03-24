@@ -294,6 +294,7 @@ const app = {
         // Quiz Actions
         const binds = [
             { id: 'btnBackDashboard', action: () => { sfx.click(); this.stopTimer(); this.switchView('dashboard'); } },
+            { id: 'btnPrevQuestion', action: () => { sfx.click(); this.prevQuestion(); } },
             { id: 'btnNextQuestion', action: () => { sfx.click(); this.nextQuestion(); } },
             { id: 'btnPause', action: () => { sfx.click(); this.togglePause(); } },
             { id: 'btnResume', action: () => { sfx.click(); this.togglePause(); } },
@@ -512,7 +513,29 @@ const app = {
                 btn.className = 'palette-btn';
                 btn.id = `paletteBtn_${idx}`;
                 btn.innerText = idx + 1;
+                btn.addEventListener('click', () => {
+                    sfx.click();
+                    this.state.currentQuestionIndex = idx;
+                    this.loadQuestion();
+                });
                 palette.appendChild(btn);
+            });
+            // Re-color palette based on existing userAnswers
+            this.state.userAnswers.forEach((ans, idx) => {
+                if (ans !== undefined) {
+                    const pb = document.getElementById(`paletteBtn_${idx}`);
+                    if (pb) {
+                        if (ans === 'skipped') pb.classList.add('skipped');
+                        else {
+                            if (this.settings.feedback) {
+                                const originalQ = this.state.currentModule.questions[idx];
+                                pb.classList.add(ans === originalQ.correctAnswer ? 'correct' : 'wrong');
+                            } else {
+                                pb.classList.add('skipped'); // generic answered color
+                            }
+                        }
+                    }
+                }
             });
         }
         
@@ -615,7 +638,40 @@ const app = {
             c.appendChild(b);
         });
         
-        document.getElementById('quizActions').classList.add('hidden');
+        // Check if question is already answered
+        const prevAnswer = this.state.userAnswers[this.state.currentQuestionIndex];
+        const actionsBlock = document.getElementById('quizActions');
+        const msgBlock = document.getElementById('feedbackMessage');
+        
+        if (prevAnswer !== undefined) {
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(b => b.disabled = true);
+            actionsBlock.classList.remove('hidden');
+            
+            if (prevAnswer === 'skipped') {
+                msgBlock.className = 'feedback-message';
+                msgBlock.innerText = "You skipped this question.";
+            } else {
+                const isCorrect = prevAnswer === q.correctAnswer;
+                if(this.settings.feedback) {
+                    btns.forEach((b, idx) => {
+                        if(idx === q.correctAnswer) b.classList.add('correct');
+                        else if(idx === prevAnswer) b.classList.add('wrong');
+                    });
+                    msgBlock.className = isCorrect ? 'feedback-message success' : 'feedback-message error';
+                    msgBlock.innerText = isCorrect ? 'Correct! ' + (q.explanation || '') : 'Incorrect. ' + (q.explanation || '');
+                } else {
+                    document.getElementById(`optBtn_${prevAnswer}`).classList.add('selected');
+                    msgBlock.className = 'feedback-message';
+                    msgBlock.innerText = "Answer recorded.";
+                }
+            }
+        } else {
+            actionsBlock.classList.add('hidden');
+            msgBlock.innerText = '';
+        }
+        
+        this.state.hasUsedLifelineOnCurrentQuestion = false;
         lucide.createIcons();
 
         // Update Palette Active State
@@ -717,8 +773,8 @@ const app = {
     },
 
     nextQuestion: function() {
-        this.state.currentQuestionIndex++;
-        if(this.state.currentQuestionIndex < this.state.currentModule.questions.length) {
+        if(this.state.currentQuestionIndex < this.state.currentModule.questions.length - 1) {
+            this.state.currentQuestionIndex++;
             this.loadQuestion();
         } else {
             this.stopTimer();
@@ -726,9 +782,18 @@ const app = {
         }
     },
 
+    prevQuestion: function() {
+        if(this.state.currentQuestionIndex > 0) {
+            this.state.currentQuestionIndex--;
+            this.loadQuestion();
+        }
+    },
+
     useLifeline: function() {
-        if(this.state.lifelinesRemaining <= 0 || this.state.userAnswers[this.state.currentQuestionIndex] !== undefined) return;
+        if(this.state.lifelinesRemaining <= 0 || this.state.userAnswers[this.state.currentQuestionIndex] !== undefined || this.state.hasUsedLifelineOnCurrentQuestion) return;
+        
         this.state.lifelinesRemaining--;
+        this.state.hasUsedLifelineOnCurrentQuestion = true;
         
         const countEl = document.getElementById('lifelineCount');
         if (countEl) countEl.innerText = this.state.lifelinesRemaining;
