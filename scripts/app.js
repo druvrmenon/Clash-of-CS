@@ -48,7 +48,8 @@ const app = {
         dailyCompleted: parseInt(localStorage.getItem('cs_master_daily') || '0'),
         dailyDate: localStorage.getItem('cs_master_date') || new Date().toDateString(),
         bookmarks: JSON.parse(localStorage.getItem('cs_master_bookmarks') || '[]'),
-        highscore: parseInt(localStorage.getItem('cs_master_highscore') || '0')
+        highscore: parseInt(localStorage.getItem('cs_master_highscore') || '0'),
+        savedSessions: JSON.parse(localStorage.getItem('cs_master_saved_sessions') || '{}')
     },
     settings: {
         username: localStorage.getItem('cs_master_name') || 'Student',
@@ -293,7 +294,7 @@ const app = {
 
         // Quiz Actions
         const binds = [
-            { id: 'btnBackDashboard', action: () => { sfx.click(); this.stopTimer(); this.switchView('dashboard'); } },
+            { id: 'btnBackDashboard', action: () => { sfx.click(); this.saveQuizProgress(); this.stopTimer(); this.switchView('dashboard'); } },
             { id: 'btnPrevQuestion', action: () => { sfx.click(); this.prevQuestion(); } },
             { id: 'btnNextQuestion', action: () => { sfx.click(); this.nextQuestion(); } },
             { id: 'btnPause', action: () => { sfx.click(); this.togglePause(); } },
@@ -339,6 +340,27 @@ const app = {
         localStorage.setItem('cs_master_date', this.state.dailyDate);
         localStorage.setItem('cs_master_bookmarks', JSON.stringify(this.state.bookmarks));
         localStorage.setItem('cs_master_highscore', this.state.highscore);
+    },
+
+    saveQuizProgress: function() {
+        if(!this.state.currentModule) return;
+        this.state.savedSessions[this.state.currentModule.id] = {
+            module: this.state.currentModule,
+            index: this.state.currentQuestionIndex,
+            score: this.state.score,
+            answers: this.state.userAnswers,
+            time: this.state.timeLeft,
+            lifelines: this.state.lifelinesRemaining,
+            hasUsedLifelineOnCurrentQuestion: this.state.hasUsedLifelineOnCurrentQuestion
+        };
+        localStorage.setItem('cs_master_saved_sessions', JSON.stringify(this.state.savedSessions));
+    },
+
+    clearQuizProgress: function() {
+        if(this.state.currentModule && this.state.savedSessions[this.state.currentModule.id]) {
+            delete this.state.savedSessions[this.state.currentModule.id];
+            localStorage.setItem('cs_master_saved_sessions', JSON.stringify(this.state.savedSessions));
+        }
     },
 
     checkDaily: function() {
@@ -435,6 +457,69 @@ const app = {
     },
 
     startModule: function(id) {
+        if (this.state.savedSessions[id] && confirm("You have an incomplete session for this module. Resume progress?")) {
+            const saved = this.state.savedSessions[id];
+            this.state.currentModule = saved.module;
+            this.state.currentQuestionIndex = saved.index;
+            this.state.score = saved.score;
+            this.state.userAnswers = saved.answers;
+            this.state.timeLeft = saved.time;
+            this.state.lifelinesRemaining = saved.lifelines;
+            this.state.hasUsedLifelineOnCurrentQuestion = saved.hasUsedLifelineOnCurrentQuestion || false;
+            this.state.isPaused = false;
+            
+            document.getElementById('quizTitle').innerText = this.state.currentModule.title;
+            const qCount = this.state.currentModule.questions.length;
+            
+            if(this.settings.practice) {
+                document.getElementById('quizTimer').innerText = 'Practice';
+                document.getElementById('btnPause').classList.add('hidden');
+            } else {
+                document.getElementById('btnPause').classList.remove('hidden');
+                this.startTimer(this.state.timeLeft || (qCount * 30));
+            }
+            
+            // Generate Palette
+            const palette = document.getElementById('questionPalette');
+            if (palette) {
+                palette.innerHTML = '';
+                this.state.currentModule.questions.forEach((_, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'palette-btn';
+                    btn.id = `paletteBtn_${idx}`;
+                    btn.innerText = idx + 1;
+                    btn.addEventListener('click', () => {
+                        sfx.click();
+                        this.state.currentQuestionIndex = idx;
+                        this.loadQuestion();
+                    });
+                    palette.appendChild(btn);
+                });
+                
+                // Re-color palette based on existing userAnswers
+                this.state.userAnswers.forEach((ans, idx) => {
+                    if (ans !== undefined) {
+                        const pb = document.getElementById(`paletteBtn_${idx}`);
+                        if (pb) {
+                            if (ans === 'skipped') pb.classList.add('skipped');
+                            else {
+                                if (this.settings.feedback) {
+                                    const originalQ = this.state.currentModule.questions[idx];
+                                    pb.classList.add(ans === originalQ.correctAnswer ? 'correct' : 'wrong');
+                                } else {
+                                    pb.classList.add('skipped'); // generic color
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            this.switchView('quiz');
+            this.loadQuestion();
+            return;
+        }
+
         const originalMod = mockModules.find(m => m.id === id);
         const modCopy = JSON.parse(JSON.stringify(originalMod));
         
@@ -756,6 +841,7 @@ const app = {
         }
 
         this.saveState();
+        this.saveQuizProgress();
         // Silently sync XP
         if(window.app.FirebaseLB && window.db) {
             window.app.FirebaseLB.publishScore(this.settings.username, this.state.totalXP, this.state.level, true);
@@ -769,6 +855,7 @@ const app = {
         const pBtn = document.getElementById(`paletteBtn_${this.state.currentQuestionIndex}`);
         if(pBtn) pBtn.classList.add('skipped');
 
+        this.saveQuizProgress();
         this.nextQuestion();
     },
 
@@ -810,6 +897,8 @@ const app = {
         // Hide two wrong options
         document.getElementById(`optBtn_${wrongIndices[0]}`).style.visibility = 'hidden';
         document.getElementById(`optBtn_${wrongIndices[1]}`).style.visibility = 'hidden';
+        
+        this.saveQuizProgress();
     },
 
     toggleBookmark: function() {
@@ -835,6 +924,8 @@ const app = {
     },
 
     finishModule: function() {
+        this.clearQuizProgress();
+        
         const totalQ = this.state.currentModule.questions.length;
         const correctAnswers = this.state.score;
         const wrongAnswers = totalQ - correctAnswers;
