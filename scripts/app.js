@@ -629,4 +629,6 @@ function triggerConfetti() {
     setTimeout(() => container.remove(), 4000);
 }
 
+window.app = app;
+window.sfx = sfx;
 document.addEventListener('DOMContentLoaded', () => app.init());
