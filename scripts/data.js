@@ -5,7 +5,7 @@ const mockModules = [
         title: 'Networking Concepts',
         description: 'Network Types, Devices, and Topologies',
         icon: 'globe',
-        questionCount: 25,
+        questionCount: 40,
         questions: [
             { text: "Riya wants to transfer pictures from her mobile phone to her laptop. She uses Bluetooth Technology. Which type of network will be formed?", options: ["PAN", "LAN", "MAN", "WAN"], correctAnswer: 0, explanation: "PAN (Personal Area Network) is for personal devices using Bluetooth." },
             { text: "The modem at the sender's computer end acts as a ____________.", options: ["Model", "Modulator", "Demodulator", "Convertor"], correctAnswer: 1, explanation: "It MOdulates the digital signal to analog at the sender's end." },
@@ -31,7 +31,21 @@ const mockModules = [
             { text: "Which device is used to connect two differently structured networks?", options: ["Bridge", "Gateway", "Repeater", "Hub"], correctAnswer: 1, explanation: "A Gateway bridges dissimilar networks." },
             { text: "RJ-45 is a connector commonly used with which type of cable?", options: ["Coaxial", "Optical Fiber", "Twisted Pair", "Microwave"], correctAnswer: 2, explanation: "Ethernet twisted pair cables use RJ-45." },
             { text: "Which layout is most suitable when a central controller acts as a server?", options: ["Ring", "Bus", "Mesh", "Star"], correctAnswer: 3, explanation: "Star topology relies on a central controller." },
-            { text: "What does WWW stand for?", options: ["World Wide Web", "World Web Wide", "Wide World Web", "Web World Wide"], correctAnswer: 0, explanation: "World Wide Web operates on top of the internet." }
+            { text: "What does WWW stand for?", options: ["World Wide Web", "World Web Wide", "Wide World Web", "Web World Wide"], correctAnswer: 0, explanation: "World Wide Web operates on top of the internet." },
+            { text: "Which protocol is used to access files from a remote server?", options: ["HTTP", "FTP", "TELNET", "SMTP"], correctAnswer: 1, explanation: "File Transfer Protocol (FTP)." },
+            { text: "Data is broken down into small chunks called _________ in packet switching.", options: ["Segments", "Frames", "Packets", "Blocks"], correctAnswer: 2, explanation: "Packet switching uses packets." },
+            { text: "Which of the following is NOT a web browser?", options: ["Google Chrome", "Mozilla Firefox", "Microsoft Edge", "Microsoft Windows"], correctAnswer: 3, explanation: "Windows is an OS, not a browser." },
+            { text: "The first node in a Bus topology is called the ________.", options: ["Terminator", "Server", "Client", "Node"], correctAnswer: 1, explanation: "Commonly a server provides the data on the bus." },
+            { text: "Which device is used to connect multiple computers in a LAN where data is sent only to the intended recipient?", options: ["Hub", "Switch", "Router", "Modem"], correctAnswer: 1, explanation: "A switch is intelligent and sends to port-specific MACs." },
+            { text: "Which cable consists of an inner copper core and a surrounding shield?", options: ["Twisted Pair", "Coaxial", "Fiber Optic", "Radiowaves"], correctAnswer: 1, explanation: "Coaxial cables are shielded." },
+            { text: "Which technology uses radio waves for communication over short distances?", options: ["Infrared", "Bluetooth", "Microwave", "Satellite"], correctAnswer: 1, explanation: "Bluetooth uses short-range radio waves." },
+            { text: "What is the full form of URL?", options: ["Uniform Resource Locator", "Universal Resource Locator", "Uniform Resource Link", "Universal Resource Link"], correctAnswer: 0, explanation: "Uniform Resource Locator is the address of a web resource." },
+            { text: "Which protocol is used for secure remote login?", options: ["FTP", "SSH", "HTTP", "POP3"], correctAnswer: 1, explanation: "Secure Shell (SSH) is for secure access." },
+            { text: "What is an IP address?", options: ["International Protocol", "Internet Protocol", "Internal Protocol", "Interconnected Protocol"], correctAnswer: 1, explanation: "Internet Protocol address uniquely identifies a device." },
+            { text: "Which layer is responsible for routing in the OSI model?", options: ["Physical", "Data Link", "Network", "Transport"], correctAnswer: 2, explanation: "The Network layer handles routing." },
+            { text: "How long is a MAC address?", options: ["32 bits", "48 bits", "64 bits", "128 bits"], correctAnswer: 1, explanation: "MAC addresses are 48-bit (6 bytes)." },
+            { text: "Which topology is highly reliable because every node is connected to every other node?", options: ["Star", "Mesh", "Tree", "Ring"], correctAnswer: 1, explanation: "Mesh topology is redundant and reliable." },
+            { text: "What is the expansion of XML?", options: ["Extensible Markup Language", "Extra Markup Language", "Extended Machine Language", "Extensible Machine Language"], correctAnswer: 0, explanation: "Extensible Markup Language." }
         ]
     },
     {
@@ -39,7 +53,7 @@ const mockModules = [
         title: 'Database Management Basics',
         description: 'DBMS concepts, keys, and SQL definitions.',
         icon: 'database',
-        questionCount: 35,
+        questionCount: 55,
         questions: [
             { text: "A data ________ is a restriction or limitation to ensure accuracy and reliability of data in database", options: ["Constraint", "Dictionary", "Query", "None of these"], correctAnswer: 0, explanation: "Constraints restrict the data that can be inserted into tables." },
             { text: "A _________ is a type of command that retrieves data from a database on a server", options: ["Constraint", "Dictionary", "Query", "None of these"], correctAnswer: 2, explanation: "A query requests data." },
@@ -75,7 +89,26 @@ const mockModules = [
             { text: "Which command shows the table structure of table emp?", options: ["Select * from emp;", "Show all from emp;", "Desc emp;", "Drop emp;"], correctAnswer: 2, explanation: "DESC table_name shows fields and types." },
             { text: "Which operator checks column for non existence of data?", options: ["NOT Operator", "Exists Operator", "IS NULL Operator", "None of the above"], correctAnswer: 2, explanation: "IS NULL checks if field has no value." },
             { text: "If we have not specified ASC or DESC after a SQL ORDER BY clause, the following is used by default", options: ["DESC", "ASC", "There is no default value", "None of the mentioned"], correctAnswer: 1, explanation: "Ascending order is the default." },
-            { text: "The SQL keyword(s) ________ is used with wildcards.", options: ["LIKE only", "IN only", "NOT IN only", "IN and NOT IN"], correctAnswer: 0, explanation: "LIKE is used with % and _." }
+            { text: "The SQL keyword(s) ________ is used with wildcards.", options: ["LIKE only", "IN only", "NOT IN only", "IN and NOT IN"], correctAnswer: 0, explanation: "LIKE is used with % and _." },
+            { text: "Which command is used to remove a data file from the database?", options: ["DELETE FILE", "REMOVE FILE", "DROP FILE", "None of these"], correctAnswer: 3, explanation: "DROP is used for tables/databases, not generic 'files' in standard SQL." },
+            { text: "Which function is used to count the number of rows in a table?", options: ["TOTAL()", "SUM()", "COUNT()", "NUMBER()"], correctAnswer: 2, explanation: "COUNT(*) or COUNT(col) counts rows." },
+            { text: "Which of the following is an example of a DDL command?", options: ["INSERT", "UPDATE", "CREATE", "SELECT"], correctAnswer: 2, explanation: "CREATE is Data Definition Language." },
+            { text: "Which operator is used to search for a specified pattern in a column?", options: ["GET", "MATCH", "LIKE", "SEARCH"], correctAnswer: 2, explanation: "LIKE operator uses wildcards for patterns." },
+            { text: "What does the 'DISTINCT' keyword do?", options: ["Selects all rows", "Selects only unique values", "Deletes duplicates", "Groups rows"], correctAnswer: 1, explanation: "DISTINCT filters out duplicate values from the result set." },
+            { text: "Which clause is used to group rows that have the same values?", options: ["ORDER BY", "GROUP BY", "SORT BY", "HAVING"], correctAnswer: 1, explanation: "GROUP BY organizes data into groups." },
+            { text: "Which clause is used to filter the results of a GROUP BY?", options: ["WHERE", "HAVING", "LIMIT", "FROM"], correctAnswer: 1, explanation: "HAVING filters groups." },
+            { text: "Which JOIN returns all records when there is a match in either left or right table?", options: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"], correctAnswer: 3, explanation: "FULL OUTER JOIN combines left and right results." },
+            { text: "In SQL, how do you select all columns from a table named 'Persons'?", options: ["SELECT Persons", "SELECT *.Persons", "SELECT * FROM Persons", "GET Persons"], correctAnswer: 2, explanation: "SELECT * FROM Persons." },
+            { text: "How do you select only the records where the 'FirstName' is 'Peter'?", options: ["SELECT * FROM Persons WHERE FirstName='Peter'", "SELECT * FROM Persons WHERE FirstName<>'Peter'", "SELECT [all] FROM Persons WHERE FirstName='Peter'", "SELECT * FROM Persons LIKE 'Peter'"], correctAnswer: 0, explanation: "Equality check with WHERE." },
+            { text: "How do you update 'FirstName' in 'Persons' table to 'Nils'?", options: ["UPDATE Persons SET FirstName='Nils'", "MODIFY Persons SET FirstName='Nils'", "SET Persons FirstName='Nils'", "UPDATE Persons FirstName='Nils'"], correctAnswer: 0, explanation: "UPDATE table SET col=val." },
+            { text: "How do you delete the records where 'FirstName' is 'Peter' in the 'Persons' Table?", options: ["DELETE FROM Persons WHERE FirstName = 'Peter'", "DELETE Persons WHERE FirstName = 'Peter'", "REMOVE FROM Persons WHERE FirstName = 'Peter'", "DELETE * FROM Persons WHERE FirstName = 'Peter'"], correctAnswer: 0, explanation: "DELETE FROM table WHERE cond." },
+            { text: "What is the result of 5 + NULL in SQL?", options: ["5", "0", "NULL", "Error"], correctAnswer: 2, explanation: "Any arithmetic with NULL results in NULL." },
+            { text: "Which SQL constraint specifies that the column cannot have a NULL value?", options: ["UNIQUE", "PRIMARY KEY", "NOT NULL", "CHECK"], correctAnswer: 2, explanation: "NOT NULL prevents NULLs." },
+            { text: "Which SQL command is used to add a new record to a table?", options: ["ADD NEW", "INSERT INTO", "CREATE", "APPEND"], correctAnswer: 1, explanation: "INSERT INTO is for new rows." },
+            { text: "What is the maximum number of primary keys a table can have?", options: ["0", "1", "2", "Unlimited"], correctAnswer: 1, explanation: "Only one primary key per table (can be composite)." },
+            { text: "Which keyword is used to sort the result-set in descending order?", options: ["DESC", "DOWN", "DESCENDING", "REVERSE"], correctAnswer: 0, explanation: "DESC is the keyword." },
+            { text: "Which operator is used to check for values within a range?", options: ["IN", "BETWEEN", "WITHIN", "RANGE"], correctAnswer: 1, explanation: "BETWEEN is for ranges (inclusive)." },
+            { text: "Which SQL keyword is used to change the structure of a table?", options: ["CHANGE", "MODIFY", "ALTER", "UPDATE"], correctAnswer: 2, explanation: "ALTER TABLE modifies structure." }
         ]
     },
     {
@@ -83,7 +116,7 @@ const mockModules = [
         title: 'Interface of Python with MySQL',
         description: 'Cursors, Execute, and Fetching methods.',
         icon: 'database',
-        questionCount: 20,
+        questionCount: 35,
         questions: [
             { text: "Which my sql driver you need to install for connection of Python With MYSQL", options: ["mysql-connector", "mysql.connector", "mysql-connect", "All of the above"], correctAnswer: 0, explanation: "We pip install mysql-connector or mysql-connector-python." },
             { text: "The ………. creates a connection to the MySQL server and returns a Connection object.", options: ["connect()", "connection()", "connector()", "None of the above"], correctAnswer: 0, explanation: "mysql.connector.connect() creates the connection." },
@@ -104,7 +137,22 @@ const mockModules = [
             { text: "The next row of resultset is fetched via", options: ["fetchone()", "fetch()", "next()", "None of the above"], correctAnswer: 0, explanation: "fetchone advances the internal pointer by one row." },
             { text: "What are invalid host values in connect function of MySql connector?", options: ["host=\"216.10.240.89\"", "host=\"localhost\"", "host=\"127.0.0.1\"", "None of the above"], correctAnswer: 3, explanation: "All these values can be valid hosts." },
             { text: "Maximum how many parameters can be accepted by connect() method.", options: ["2", "3", "4", "5"], correctAnswer: 2, explanation: "host, user, password, database." },
-            { text: "We cannot create a new database using python MySql interface", options: ["True", "False", "Partially True", "Not defined"], correctAnswer: 1, explanation: "We can execute 'CREATE DATABASE dbname'." }
+            { text: "We cannot create a new database using python MySql interface", options: ["True", "False", "Partially True", "Not defined"], correctAnswer: 1, explanation: "We can execute 'CREATE DATABASE dbname'." },
+            { text: "Which method is used to create a cursor object?", options: ["connection.cursor()", "connection.create_cursor()", "cursor()", "mysql.cursor()"], correctAnswer: 0, explanation: "Connection object has the cursor() method." },
+            { text: "What is the purpose of the 'user' parameter in connect()?", options: ["The name of the database", "The OS username", "The MySQL database user", "The Python developer name"], correctAnswer: 2, explanation: "It specifies the MySQL user to login with." },
+            { text: "What is returned by cursor.execute() for a successful SELECT query?", options: ["The result set", "True", "None or a count", "A list of tuples"], correctAnswer: 2, explanation: "execute() returns None; you use fetch methods to get data." },
+            { text: "Which exception is raised when a database connection fails?", options: ["ConnectionError", "interfaceError", "OperationalError", "DatabaseError"], correctAnswer: 2, explanation: "OperationalError is common for connection failures." },
+            { text: "How do you fetch the first 5 records from a result set?", options: ["fetchone(5)", "fetchall(5)", "fetchmany(5)", "get(5)"], correctAnswer: 2, explanation: "fetchmany(size) retrieves a specific number of rows." },
+            { text: "Can we run multiple SQL statements in one cursor.execute() call?", options: ["Yes, always", "No, it's one by one", "Only in Python 2", "Depends on the driver configuration"], correctAnswer: 3, explanation: "By default no, but 'multi=True' parameter can enable it." },
+            { text: "Which command would you use to see the list of tables via Python?", options: ["cursor.execute('SHOW TABLES')", "cursor.show_tables()", "connection.get_tables()", "cursor.fetch_tables()"], correctAnswer: 0, explanation: "You execute the SQL command 'SHOW TABLES'." },
+            { text: "What happens if you forget to call commit() after an INSERT?", options: ["Data is still saved", "Data is lost after connection close", "Python throws an error", "Database hangs"], correctAnswer: 1, explanation: "Non-committed transactions are rolled back." },
+            { text: "Which character is used as a placeholder for parameters in mysql-connector?", options: ["?", ":1", "%s", "$"], correctAnswer: 2, explanation: "mysql-connector uses '%s' as the placeholder." },
+            { text: "What is the result of fetchall() if the query returns exactly one row?", options: ["A tuple", "A list containing one tuple", "A dictionary", "A single value"], correctAnswer: 1, explanation: "fetchall() always returns a list of tuples." },
+            { text: "Which object is used to manage the communication with the MySQL server?", options: ["The cursor", "The connection", "The query string", "The driver"], correctAnswer: 1, explanation: "The connection object manages the physical link." },
+            { text: "Does fetchone() raise an error if called on an empty result set?", options: ["Yes", "No, it returns None", "Yes, if in debug mode", "No, it returns empty list"], correctAnswer: 1, explanation: "It returns None peacefully." },
+            { text: "Which method is used to get the number of rows affected by an UPDATE statement?", options: ["cursor.count()", "cursor.rowcount", "cursor.affected()", "cursor.size"], correctAnswer: 1, explanation: "rowcount attribute holds this info." },
+            { text: "What is the default port for MySQL?", options: ["80", "443", "3306", "8080"], correctAnswer: 2, explanation: "3306 is the standard MySQL port." },
+            { text: "Which SQL command is passed to cursor.execute() to delete all rows like the DELETE FROM command?", options: ["TRUNCATE TABLE", "CLEAR TABLE", "EMPTY TABLE", "PURGE TABLE"], correctAnswer: 0, explanation: "TRUNCATE is faster than DELETE for clearing tables." }
         ]
     },
     {
@@ -112,7 +160,7 @@ const mockModules = [
         title: 'Python File Handling',
         description: 'Text files, Binary files, Pickling, and CSV',
         icon: 'file-text',
-        questionCount: 30,
+        questionCount: 50,
         questions: [
             { text: "Which of the following options can be used to read the first line of a text file Myfile.txt?", options: ["myfile = open('Myfile.txt'); myfile.read()", "myfile = open('Myfile.txt','r'); myfile.read(n)", "myfile = open('Myfile.txt'); myfile.readline()", "myfile = open('Myfile.txt'); myfile.readlines()"], correctAnswer: 2, explanation: "readline() reads exactly one line." },
             { text: "Syntax of seek function in Python is myfile.seek(offset, reference_point). What is the default value of reference_point?", options: ["0", "1", "2", "3"], correctAnswer: 0, explanation: "0 stands for beginning of the file." },
@@ -143,7 +191,26 @@ const mockModules = [
             { text: "What does the 'a+' mode do?", options: ["Truncates file and opens for write/read", "Append mode, plus reading ability", "Opens for reading only", "Throws error if exists"], correctAnswer: 1, explanation: "Append + Read." },
             { text: "If f.seek(0, 2) is executed, where does the pointer go?", options: ["Beginning of file", "Middle of file", "End of file", "Raises error in text mode"], correctAnswer: 2, explanation: "os.SEEK_END (2) goes to the end." },
             { text: "Which of these is the correct way to write a list of strings [\"A\\n\", \"B\\n\"] into a file?", options: ["write()", "writelines()", "writelist()", "putlines()"], correctAnswer: 1, explanation: "writelines() accepts an iterable of strings." },
-            { text: "What exception is thrown if you try to f.read() from a file opened in 'w' mode?", options: ["IOError / UnsupportedOperation", "NameError", "SyntaxError", "ValueError"], correctAnswer: 0, explanation: "File not open for reading." }
+            { text: "What exception is thrown if you try to f.read() from a file opened in 'w' mode?", options: ["IOError / UnsupportedOperation", "NameError", "SyntaxError", "ValueError"], correctAnswer: 0, explanation: "File not open for reading." },
+            { text: "Which of the following describes the 'wb+' mode?", options: ["Write binary only", "Read and write binary, overwrites existing", "Append and read binary", "Read only binary"], correctAnswer: 1, explanation: "w+ is read/write, 'b' is binary, and 'w' overwrites." },
+            { text: "Which function is used to check if a file has been closed?", options: ["f.isclosed()", "f.closed", "f.check_close()", "f.status()"], correctAnswer: 1, explanation: "The .closed attribute returns True/False." },
+            { text: "What is an EOL character?", options: ["End of Line", "End of List", "End of Loop", "End of Language"], correctAnswer: 0, explanation: "End of Line character (like \\n)." },
+            { text: "When writing to a CSV file using csv.writer, which method writes multiple rows at once?", options: ["writerows()", "writerow()", "writeall()", "appendrows()"], correctAnswer: 0, explanation: "writerows() takes a list of lists." },
+            { text: "Which standard module is used to work with file paths across different operating systems?", options: ["os.path", "sys.path", "pathlib", "Both A and C"], correctAnswer: 3, explanation: "Both os.path and pathlib are standard for paths." },
+            { text: "What does the 'with' statement guarantee even if an exception occurs?", options: ["File is deleted", "File is saved", "File is closed", "Program ignores the error"], correctAnswer: 2, explanation: "It ensures clean-up (closing)." },
+            { text: "Which binary mode allows reading and appending?", options: ["ab+", "rb+", "wb+", "ab"], correctAnswer: 0, explanation: "ab+ is append and read binary." },
+            { text: "What is the return type of f.readlines()?", options: ["String", "List of strings", "Tuple of strings", "None"], correctAnswer: 1, explanation: "It returns a list where each element is a line." },
+            { text: "If you open a file in 'r' mode and the file is empty, what does read() return?", options: ["None", "[]", "'' (empty string)", "EOFError"], correctAnswer: 2, explanation: "It returns an empty string." },
+            { text: "Which method clears the internal buffer of a file object?", options: ["clear()", "flush()", "empty()", "refresh()"], correctAnswer: 1, explanation: "flush() writes the buffer to disk." },
+            { text: "In a text file, what is the default encoding on many modern systems?", options: ["ASCII", "UTF-8", "UTF-16", "ISO-8859-1"], correctAnswer: 1, explanation: "UTF-8 is the standard for web and files." },
+            { text: "Which method moves the file pointer back to the beginning?", options: ["f.reset()", "f.seek(0)", "f.start()", "f.tell(0)"], correctAnswer: 1, explanation: "seek(0) moves to the first byte." },
+            { text: "What is 'pickling' also known as?", options: ["Flattening", "Serializing", "Dumping", "All of the above"], correctAnswer: 3, explanation: "Serialized data is often called flat or dumped." },
+            { text: "Which file mode is used to open a file for both reading and writing, keeping the existing content and starting at the beginning?", options: ["r+", "w+", "a+", "rw"], correctAnswer: 0, explanation: "r+ opens for update without truncation." },
+            { text: "Which function finds the size of a file in bytes?", options: ["os.getsize(path)", "os.path.size(path)", "f.size()", "path.len()"], correctAnswer: 0, explanation: "os.path.getsize(path) returns the byte count." },
+            { text: "What is the character for a tab in a path string (escaped)?", options: ["\\n", "\\t", "\\r", "\\b"], correctAnswer: 1, explanation: "\\t represents a horizontal tab." },
+            { text: "How do you check if a file exists before opening it?", options: ["os.path.exists(path)", "os.check(path)", "exists(path)", "f.exists()"], correctAnswer: 0, explanation: "os.path.exists() is the standard check." },
+            { text: "Which method is used to read a specific number of characters from a text file?", options: ["read(n)", "readline(n)", "get(n)", "fetch(n)"], correctAnswer: 0, explanation: "read(n) reads 'n' chars." },
+            { text: "What does 'unpickling' do?", options: ["Converts object to byte stream", "Converts byte stream back to object", "Deletes a file", "Compresses a file"], correctAnswer: 1, explanation: "It reverses the pickling process." }
         ]
     },
     {
@@ -151,7 +218,7 @@ const mockModules = [
         title: 'Python Functions & Scope',
         description: 'LEGB rule, Global variables, Default Arguments',
         icon: 'code-2',
-        questionCount: 20,
+        questionCount: 35,
         questions: [
             { text: "What will be the output: global a; a = 100 inside a function called my_func(), if the global variable outside was a=5?", options: ["Local 'a' remains 100, global 'a' remains 5", "Global 'a' becomes 100", "Syntax Error", "Global 'a' becomes 105"], correctAnswer: 1, explanation: "The 'global' keyword binds the variable to the global scope." },
             { text: "An exception may be raised even if the program is syntactically correct.", options: ["True", "False", "Only in Python 2", "Depends on OS"], correctAnswer: 0, explanation: "Runtime errors (like ZeroDivisionError) happen during execution." },
@@ -172,7 +239,22 @@ const mockModules = [
             { text: "If a function calls itself, it is called:", options: ["Recursive function", "Iterative function", "Dynamic function", "Method"], correctAnswer: 0, explanation: "Recursion occurs when a function calls itself." },
             { text: "What does the `pass` statement do?", options: ["Exits the function", "Skips to the next loop iteration", "Does absolutely nothing (placeholder)", "Raises an error"], correctAnswer: 2, explanation: "`pass` is a null operation." },
             { text: "Which built-in function returns the memory address reference (identity) of an object?", options: ["address()", "loc()", "id()", "ref()"], correctAnswer: 2, explanation: "id() returns the object's identity." },
-            { text: "In `def f(*args):`, what data type is `args` inside the function?", options: ["List", "Tuple", "Dict", "Set"], correctAnswer: 1, explanation: "Variable length positional arguments form a tuple." }
+            { text: "In `def f(*args):`, what data type is `args` inside the function?", options: ["List", "Tuple", "Dict", "Set"], correctAnswer: 1, explanation: "Variable length positional arguments form a tuple." },
+            { text: "What is the output of bool([]) in Python?", options: ["True", "False", "None", "Error"], correctAnswer: 1, explanation: "Empty sequences are False in boolean context." },
+            { text: "Which keyword is used to skip the rest of the code inside a loop and start the next iteration?", options: ["break", "pass", "continue", "skip"], correctAnswer: 2, explanation: "continue skips to the next iteration." },
+            { text: "What defines the order in which Python looks for variables?", options: ["ASCII", "LEGB", "FIFO", "LIFO"], correctAnswer: 1, explanation: "LEGB: Local, Enclosed, Global, Built-in." },
+            { text: "What is a docstring in Python?", options: ["A string used for documentation inside a function/module", "A type of list", "A system error", "A keyword"], correctAnswer: 0, explanation: "Docstrings describe what a function does." },
+            { text: "Which operator is used to check if a value exists within a list?", options: ["in", "is", "exist", "has"], correctAnswer: 0, explanation: "'in' is the membership operator." },
+            { text: "What does the function abs(-5) return?", options: ["0", "5", "-5", "None"], correctAnswer: 1, explanation: "abs() returns the absolute (positive) value." },
+            { text: "Which built-in function returns a sorted version of a list without modifying the original?", options: ["list.sort()", "sorted()", "reversed()", "order()"], correctAnswer: 1, explanation: "sorted() returns a new list." },
+            { text: "How do you define a function that accepts any number of keyword arguments?", options: ["def f(*args):", "def f(**kwargs):", "def f(kwargs):", "def f(*key):"], correctAnswer: 1, explanation: "**kwargs captures keyword arguments into a dictionary." },
+            { text: "What is the result of 2 ** 3 in Python?", options: ["6", "8", "9", "5"], correctAnswer: 1, explanation: "** is the exponentiation operator." },
+            { text: "Which module must be imported to use the sqrt() function?", options: ["math", "sys", "random", "os"], correctAnswer: 0, explanation: "math.sqrt()." },
+            { text: "What is the output of 'hello'[1]?", options: ["h", "e", "l", "o"], correctAnswer: 1, explanation: "Indexing starts at 0, so 'e' is at index 1." },
+            { text: "Which function converts a string to an integer?", options: ["str()", "float()", "int()", "num()"], correctAnswer: 2, explanation: "int() casts to integer." },
+            { text: "What does len('Python') return?", options: ["6", "5", "7", "0"], correctAnswer: 0, explanation: "Returns the number of characters." },
+            { text: "Which of the following creates a tuple?", options: ["(1, 2)", "[1, 2]", "{1, 2}", "1, 2"], correctAnswer: 0, explanation: "Parentheses (or comma-separated values) create tuples." },
+            { text: "What is the global keyword used for?", options: ["Defining a global variable", "Accessing/Modifying a variable from the global scope inside a function", "Deleting global memory", "Importing all modules"], correctAnswer: 1, explanation: "It allows modification of module-level variables." }
         ]
     },
     {
@@ -180,7 +262,7 @@ const mockModules = [
         title: 'Stack & Data Structures',
         description: 'LIFO, Push/Pop operations, Lists',
         icon: 'layers',
-        questionCount: 20,
+        questionCount: 35,
         questions: [
             { text: "Which principle does a Stack follow?", options: ["FIFO", "LIFO", "FILO", "Both B and C"], correctAnswer: 3, explanation: "Stack is Last In First Out (LIFO), which is equivalent to First In Last Out (FILO)." },
             { text: "Inserting an element into a stack is called:", options: ["Insert", "Add", "Push", "Append"], correctAnswer: 2, explanation: "The operation to insert into a stack is termed 'Push'." },
@@ -201,7 +283,22 @@ const mockModules = [
             { text: "A condition that occurs when a push() operation cannot proceed due to size limits is:", options: ["Stack Overflow", "Stack Underflow", "Memory Halt", "Pop Limit"], correctAnswer: 0, explanation: "Stack Overflow occurs when pushing to a full stack." },
             { text: "Which data structure is recursive in nature and can be implemented functionally using the call stack?", options: ["Stack", "Queue", "Array", "Dictionary"], correctAnswer: 0, explanation: "Function recursion actively uses the memory call stack." },
             { text: "To reverse the elements in a list purely in-place, which method is used?", options: ["[::-1]", "reversed()", "reverse()", "flip()"], correctAnswer: 2, explanation: "L.reverse() alters the list in place, whereas [::-1] returns a new list." },
-            { text: "If a stack has elements [5, 10, 15] and we Pop once and Push 20, what is the new stack top?", options: ["10", "15", "20", "None"], correctAnswer: 2, explanation: "Pop removes 15, Push adds 20. The top is 20." }
+            { text: "If a stack has elements [5, 10, 15] and we Pop once and Push 20, what is the new stack top?", options: ["10", "15", "20", "None"], correctAnswer: 2, explanation: "Pop removes 15, Push adds 20. The top is 20." },
+            { text: "Which operation is used to check if the stack is full, assuming a fixed size?", options: ["is_full", "is_empty", "overflow", "size_check"], correctAnswer: 0, explanation: "is_full() typically checks size vs capacity." },
+            { text: "What is the time complexity of a Push operation in a Stack implemented with a list?", options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"], correctAnswer: 0, explanation: "Appending to a list is an O(1) amortized operation." },
+            { text: "In a postfix expression, where is the operator located?", options: ["Before operands", "Between operands", "After operands", "At the very beginning"], correctAnswer: 2, explanation: "Postfix (Reverse Polish Notation) puts operators after operands." },
+            { text: "Which data structure is primarily used to evaluate arithmetic expressions?", options: ["Queue", "Stack", "Tree", "Graph"], correctAnswer: 1, explanation: "Stacks handle operators and operands during evaluation." },
+            { text: "What happens during a 'Pop' operation?", options: ["An item is added", "The top item is removed", "The stack is cleared", "The bottom item is removed"], correctAnswer: 1, explanation: "Pop removes from the TOP." },
+            { text: "If the current stack is [A, B, C] where C is the top, what remains after Pop()?", options: ["[B, C]", "[A, B]", "[C, A]", "[A, C]"], correctAnswer: 1, explanation: "C is removed." },
+            { text: "Which of these is a real-world application of a Stack?", options: ["Printer queue", "Undo mechanism in editors", "Customer service line", "GPS routing"], correctAnswer: 1, explanation: "Undo uses a stack to backtrack operations." },
+            { text: "What is the output of s = []; s.append(1); s.append(2); s.pop(); s.append(3); print(s)?", options: ["[1, 2, 3]", "[1, 3]", "[3, 1]", "[2, 3]"], correctAnswer: 1, explanation: "1 added, 2 added, 2 removed, 3 added." },
+            { text: "In Python, which list method serves as the 'Push' operation?", options: ["add()", "insert(0, val)", "append()", "extend()"], correctAnswer: 2, explanation: "append() adds to the end (top)." },
+            { text: "What exception is common when your recursion is too deep?", options: ["MemoryError", "RecursionError", "OverflowError", "TypeError"], correctAnswer: 1, explanation: "RecursionError: maximum recursion depth exceeded." },
+            { text: "Which of the following is an example of LIFO?", options: ["A file of papers on a desk", "People waiting for a bus", "A conveyor belt", "Messages in a chat"], correctAnswer: 0, explanation: "The last paper placed on the pile is the first one you pick up." },
+            { text: "What is 'Peek' in stack terminology?", options: ["Removing the top element", "Adding a bottom element", "Viewing the top element without removing", "Searching for an element"], correctAnswer: 2, explanation: "It looks at the top val." },
+            { text: "Can a stack be implemented using a linked list?", options: ["Yes", "No", "Only in C++", "Only for integers"], correctAnswer: 0, explanation: "Linked lists are efficient for stack LIFO operations." },
+            { text: "What is the state of an empty stack's Top index (in many implementations)?", options: ["0", "1", "-1", "None"], correctAnswer: 2, explanation: "-1 often indicates empty (no valid index)." },
+            { text: "Which operation is used to check if the stack is empty?", options: ["is_empty()", "check_empty()", "size() == 0", "Both A and C"], correctAnswer: 3, explanation: "is_empty() is a common method, and checking size is also valid." }
         ]
     }
 ];
