@@ -309,7 +309,6 @@ const mockModules = [
         questionCount: 50,
         questions: [
             { text: "Which of the following is a valid identifier in Python?", options: ["2nd_name", "first-name", "initial_name", "global"], correctAnswer: 2, explanation: "Identifiers cannot start with numbers, contain hyphens, or be keywords." },
-            { text: "What is the output of print(type(0xFF))?", options: ["<class 'str'>", "<class 'int'>", "<class 'float'>", "<class 'hex'>"], correctAnswer: 1, explanation: "Hexadecimal literals like 0xFF are integers in Python." },
             { text: "Which operator is used for floor division in Python?", options: ["/", "//", "%", "\\\\"], correctAnswer: 1, explanation: "// returns the integer part of the quotient." },
             { text: "What is the result of 10 % 3?", options: ["3", "1", "0", "3.33"], correctAnswer: 1, explanation: "% is the modulo operator which returns the remainder." },
             { text: "Which of the following is an immutable data type?", options: ["List", "Dictionary", "Set", "Tuple"], correctAnswer: 3, explanation: "Tuples cannot be modified after creation." },
