@@ -98,6 +98,7 @@ const app = {
     },
 
     initParallax: function() {
+        if (window.innerWidth < 768) return; // Disable parallax on mobile
         document.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth - 0.5) * 2;
             const y = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -118,18 +119,26 @@ const app = {
         });
     },
 
+    toggleThemeMenu: function(e) {
+        sfx.click();
+        const themeMenu = document.getElementById('themeMenu');
+        themeMenu.classList.toggle('hidden');
+        if (e) e.stopPropagation();
+    },
+
     bindEvents: function() {
         // Theme
         const themeMenu = document.getElementById('themeMenu');
-        document.getElementById('themeToggleBtn').addEventListener('click', (e) => {
-            sfx.click();
-            themeMenu.classList.toggle('hidden');
-            e.stopPropagation();
-        });
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        
+        themeToggleBtn.addEventListener('click', this.toggleThemeMenu.bind(this));
         document.addEventListener('click', () => themeMenu.classList.add('hidden'));
+
         document.querySelectorAll('.theme-option').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const theme = e.target.getAttribute('data-set-theme');
+                const theme = e.currentTarget.getAttribute('data-set-theme');
+                if(!theme) return;
+                
                 document.documentElement.classList.remove('theme-flash');
                 void document.documentElement.offsetWidth; // trigger reflow
                 document.documentElement.classList.add('theme-flash');
@@ -142,12 +151,12 @@ const app = {
         const fab = document.getElementById('mobileFab');
         const fabMain = fab.querySelector('.fab-main');
         fabMain.addEventListener('click', (e) => { e.stopPropagation(); fab.classList.toggle('open'); });
-        document.addEventListener('click', () => { fab.classList.remove('open'); });
+        document.addEventListener('click', () => { if(fab) fab.classList.remove('open'); });
         
         document.getElementById('fabLeaderboard').addEventListener('click', () => { document.getElementById('btnLeaderboardMenu').click(); });
         document.getElementById('fabBookmarks').addEventListener('click', () => { document.getElementById('btnBookmarksMenu').click(); });
         document.getElementById('fabSettings').addEventListener('click', () => { document.getElementById('btnSettings').click(); });
-        document.getElementById('fabTheme').addEventListener('click', (e) => { document.getElementById('themeToggleBtn').click(); e.stopPropagation(); });
+        document.getElementById('fabTheme').addEventListener('click', (e) => { this.toggleThemeMenu(e); });
 
         // Settings Modal
         document.getElementById('btnSettings').addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.remove('hidden'); });

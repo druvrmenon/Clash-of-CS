@@ -1132,7 +1132,18 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 @media (max-width: 768px) {
     .header-right { display: none !important; }
     .fab-container { display: flex; }
-    .theme-menu { bottom: 0; top: auto; right: 60px; }
+    .theme-menu { 
+        position: fixed;
+        bottom: 85px; 
+        right: 20px; 
+        top: auto; 
+        min-width: 180px;
+        z-index: 1001;
+    }
+    .theme-option {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
 }
 
 /* 16. Circular Final Score SVG */
