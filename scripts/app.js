@@ -171,6 +171,52 @@ const app = {
         document.getElementById('fabSettings').addEventListener('click', () => { document.getElementById('btnSettings').click(); });
         document.getElementById('fabTheme').addEventListener('click', (e) => { this.toggleThemeMenu(e); });
 
+        // Multiplayer Events
+        const battleModal = document.getElementById('battleModal');
+        const createRoomState = document.getElementById('createRoomState');
+        const joinRoomState = document.getElementById('joinRoomState');
+
+        document.getElementById('btnCreateBattle').addEventListener('click', () => {
+            sfx.click();
+            const code = multiplayer.createRoom();
+            document.getElementById('roomCodeText').innerText = code;
+            document.getElementById('battleModalTitle').innerText = "Host a Battle";
+            createRoomState.classList.remove('hidden');
+            joinRoomState.classList.add('hidden');
+            battleModal.classList.remove('hidden');
+        });
+
+        document.getElementById('btnJoinBattle').addEventListener('click', () => {
+            sfx.click();
+            document.getElementById('battleModalTitle').innerText = "Join a Battle";
+            createRoomState.classList.add('hidden');
+            joinRoomState.classList.remove('hidden');
+            battleModal.classList.remove('hidden');
+        });
+
+        document.getElementById('btnConfirmJoin').addEventListener('click', () => {
+            sfx.click();
+            const code = document.getElementById('inputRoomCode').value;
+            if (code.length === 6) {
+                multiplayer.joinRoom(code).catch(err => {
+                    this.showToast(err.message);
+                });
+            } else {
+                this.showToast("Enter a 6-digit code.");
+            }
+        });
+
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                sfx.click();
+                document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
+                // If closing battle modal while waiting, maybe cancel?
+                if (multiplayer.currentRoom) {
+                    // Logic to cancel room can go here
+                }
+            });
+        });
+
         // Settings Modal
         document.getElementById('btnSettings').addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.remove('hidden'); });
         document.querySelector('.close-modal').addEventListener('click', () => { sfx.click(); document.getElementById('settingsModal').classList.add('hidden'); });
@@ -371,6 +417,17 @@ const app = {
         this.state.lifelineUsed = false;
         this.state.isPaused = false;
         
+        // Multiplayer Reset
+        if (multiplayer.battleActive) {
+            document.getElementById('battleHUD').classList.remove('hidden');
+            document.getElementById('myBattleProgress').style.width = '0%';
+            document.getElementById('opponentProgress').style.width = '0%';
+            document.getElementById('myNameLabel').innerText = this.settings.username;
+            document.getElementById('opponentNameLabel').innerText = multiplayer.opponentName;
+        } else {
+            document.getElementById('battleHUD').classList.add('hidden');
+        }
+
         document.getElementById('quizTitle').innerText = this.state.currentModule.title;
         document.getElementById('btnLifeline').disabled = false;
         document.getElementById('pauseOverlay').classList.add('hidden');
@@ -519,6 +576,13 @@ const app = {
                 msg.className = 'feedback-message error';
                 msg.innerText = 'Incorrect. ' + (q.explanation || '');
             }
+
+            // Multiplayer Sync
+            if (multiplayer.battleActive) {
+                multiplayer.syncMyScore(this.state.score);
+                const percentage = (this.state.score / this.state.currentModule.questions.length) * 100;
+                document.getElementById('myBattleProgress').style.width = percentage + "%";
+            }
         } else {
             // No feedback until end
             if(selectedIdx === q.correctAnswer) this.state.score++;
@@ -598,6 +662,24 @@ const app = {
         this.state.dailyCompleted += 1;
         if(this.state.score > this.state.highscore) this.state.highscore = this.state.score;
         this.saveState();
+        
+        // Multiplayer Cleanup
+        if (multiplayer.battleActive) {
+            multiplayer.syncMyScore(this.state.score); // Final sync
+            const battleModal = document.getElementById('battleModal');
+            battleModal.classList.add('hidden');
+            // Show winner/loser toast
+            if (this.state.score > multiplayer.opponentScore) {
+                this.showToast("🔥 VICTORY! You beat " + multiplayer.opponentName);
+                if(this.settings.sfx) triggerConfetti();
+            } else if (this.state.score < multiplayer.opponentScore) {
+                this.showToast("💀 DEFEAT! " + multiplayer.opponentName + " won.");
+            } else {
+                this.showToast("🤝 DRAW! It was a close battle.");
+            }
+            multiplayer.battleActive = false;
+            multiplayer.currentRoom = null;
+        }
         
         const circle = document.getElementById('finalScoreCircle');
         const percentage = totalQ === 0 ? 0 : (this.state.score / totalQ) * 100;

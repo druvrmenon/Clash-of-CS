@@ -16,6 +16,23 @@
         <div class="blob blob-3" id="blob3"></div>
     </div>
     <div class="noise-overlay"></div>
+    
+    <!-- Battle HUD (Fixed Overlay during Quiz) -->
+    <div id="battleHUD" class="battle-hud hidden">
+        <div class="battle-player player-me">
+            <span id="myNameLabel">You</span>
+            <div class="battle-progress-bg">
+                <div id="myBattleProgress" class="battle-progress-fill"></div>
+            </div>
+        </div>
+        <div class="battle-vs">VS</div>
+        <div class="battle-player player-opponent">
+            <span id="opponentNameLabel">Searching...</span>
+            <div class="battle-progress-bg">
+                <div id="opponentProgress" class="battle-progress-fill opponent"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modals -->
     <div id="settingsModal" class="modal hidden">
@@ -129,6 +146,27 @@
                 </div>
                 <div class="xp-text" style="text-align:center; font-size:0.8rem; color:var(--text-secondary); margin-bottom:var(--spacing-lg);">
                     <span id="xpToNextBlock">XP to next level: <span id="xpToNext">100</span></span>
+                </div>
+
+                <div class="dashboard-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:var(--spacing-md); margin-bottom:var(--spacing-lg);">
+                    <!-- Daily Challenge -->
+                    <div class="dashboard-card glass-panel animate-slide-up" style="padding:var(--spacing-md);">
+                        <h3 style="display:flex; align-items:center; gap:8px;"><i data-lucide="zap" style="color:var(--accent-primary);"></i> Daily Quest</h3>
+                        <p id="dailyQuestText" style="font-size:0.9rem; color:var(--text-secondary); margin:10px 0;">Complete any module to earn bonus XP!</p>
+                        <div class="quest-progress" style="height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+                            <div id="questProgressBar" style="width: 0%; height:100%; background:var(--accent-primary);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Multiplayer Battle -->
+                    <div class="dashboard-card glass-panel animate-slide-up" style="padding:var(--spacing-md); animation-delay: 0.1s;">
+                        <h3 style="display:flex; align-items:center; gap:8px;"><i data-lucide="swords" style="color:var(--error);"></i> Clash Mode</h3>
+                        <p style="font-size:0.9rem; color:var(--text-secondary); margin:10px 0;">Challenge a friend to a real-time CS duel!</p>
+                        <div class="card-actions" style="display:flex; gap:10px;">
+                            <button id="btnCreateBattle" class="btn-primary" style="flex:1; padding:8px;">Create</button>
+                            <button id="btnJoinBattle" class="btn-secondary" style="flex:1; padding:8px;">Join</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="dashboard-controls" style="margin-bottom: var(--spacing-md); display:flex; gap:10px;">
@@ -266,8 +304,39 @@
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
-    <script src="./scripts/data.js"></script>
-    <script src="./scripts/app.js"></script>
-    <script type="module" src="./scripts/firebase-leaderboard.js"></script>
+
+    <!-- Matchmaking Modal -->
+    <div id="battleModal" class="modal hidden">
+        <div class="modal-content glass-panel animate-scale-up" style="max-width:400px;">
+            <div class="modal-header">
+                <h3 id="battleModalTitle" style="display:flex; align-items:center; gap:10px;"><i data-lucide="swords"></i> Multiplayer Battle</h3>
+                <button class="icon-btn close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="padding:20px; text-align:center;">
+                <div id="createRoomState" class="hidden">
+                    <p style="color:var(--text-secondary);">Share this code with your friend:</p>
+                    <div class="room-code-display" id="roomCodeText" style="font-size:2.5rem; font-weight:bold; letter-spacing:8px; color:var(--accent-primary); margin:20px 0; padding:15px; background:rgba(0,0,0,0.2); border-radius:10px; border:1px dashed var(--accent-primary);">------</div>
+                    <div class="loading-spinner" style="margin:20px auto; width:30px; height:30px; border:3px solid rgba(255,255,255,0.1); border-top:3px solid var(--accent-primary); border-radius:50%; animation: spin 1s linear infinite;"></div>
+                    <p class="small-text" style="font-size:0.8rem; color:var(--text-secondary);">Waiting for opponent to join...</p>
+                </div>
+                <div id="joinRoomState" class="hidden">
+                    <p style="color:var(--text-secondary); margin-bottom:20px;">Enter the 6-digit room code:</p>
+                    <input type="text" id="inputRoomCode" class="custom-input" placeholder="000000" maxlength="6" style="text-align:center; font-size:2rem; letter-spacing:8px; width:100%; margin-bottom:20px; background:rgba(0,0,0,0.2);">
+                    <button id="btnConfirmJoin" class="btn-primary" style="width:100%; padding:15px;">Join Battle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="scripts/firebase-config.js"></script>
+    <script src="scripts/data.js"></script>
+    <script src="scripts/multiplayer.js"></script>
+    <script src="scripts/app.js"></script>
+    <script type="module" src="scripts/firebase-leaderboard.js"></script>
 </body>
 </html>

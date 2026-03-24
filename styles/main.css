@@ -1225,3 +1225,120 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     box-shadow: var(--glass-shadow); 
     border: 1px solid var(--glass-border);
 }
+
+/* Multiplayer Battle HUD */
+.battle-hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-lg);
+    border-bottom: 2px solid var(--accent-primary);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.battle-hud.hidden {
+    transform: translateY(-100%);
+    display: flex !important; /* Keep flex for transition, but moved off screen */
+    pointer-events: none;
+}
+
+.battle-player {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 38%;
+}
+
+.battle-player span {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-primary);
+}
+
+.battle-progress-bg {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.battle-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 15px var(--accent-primary);
+}
+
+.battle-progress-fill.opponent {
+    background: linear-gradient(90deg, #ff0055, var(--error));
+    box-shadow: 0 0 15px var(--error);
+}
+
+.battle-vs {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 1.8rem;
+    font-style: italic;
+    color: var(--text-primary);
+    text-shadow: 0 0 15px var(--accent-primary), 0 0 30px var(--accent-primary);
+    animation: vsPulse 2s infinite ease-in-out;
+}
+
+@keyframes vsPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 20px var(--error), 0 0 40px var(--error); }
+}
+
+/* Matchmaking Styles */
+.room-code-display {
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.loading-spinner {
+    border-radius: 50%;
+    border-top-color: var(--accent-primary);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Battle Overlays & Effects */
+.battle-start-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg-main);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+    .battle-hud {
+        padding: 0 var(--spacing-sm);
+        height: 60px;
+    }
+    .battle-vs {
+        font-size: 1.2rem;
+    }
+    .battle-player span {
+        font-size: 0.65rem;
+    }
+}
