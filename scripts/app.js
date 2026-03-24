@@ -71,6 +71,19 @@ const app = {
         document.documentElement.setAttribute('data-theme', currentTheme);
         this.initParallax();
         this.initScrollListener();
+
+        // Name prompt for first-time users
+        setTimeout(() => {
+            if (this.settings.username === 'Student') {
+                const name = prompt("Welcome to CS Master! What's your name?", "");
+                if (name && name.trim()) {
+                    this.settings.username = name.trim();
+                    localStorage.setItem('cs_master_name', this.settings.username);
+                    this.initDashboard();
+                    this.showToast(`Welcome, ${name}!`);
+                }
+            }
+        }, 1000);
     },
 
     overrideAlertWithToast: function() {
@@ -571,9 +584,15 @@ const app = {
 
     finishModule: function() {
         const totalQ = this.state.currentModule.questions.length;
-        const xpEarned = this.state.score * 10;
+        const correctAnswers = this.state.score;
+        const wrongAnswers = totalQ - correctAnswers;
         
-        this.state.totalXP += xpEarned;
+        // XP Calculation: +10 for correct, -5 for incorrect
+        const xpEarned = correctAnswers * 10;
+        const xpPenalty = wrongAnswers * 5;
+        const netXP = Math.max(-50, xpEarned - xpPenalty); // Minimum -50 per module
+        
+        this.state.totalXP = Math.max(0, this.state.totalXP + netXP); // Total XP cannot be negative
         if(this.state.score === totalQ && totalQ > 0) this.state.streak++; else this.state.streak = 0;
         
         this.state.dailyCompleted += 1;
@@ -589,7 +608,8 @@ const app = {
             circle.style.strokeDasharray = `${percentage}, 100`;
         }, 50);
         document.getElementById('finalScoreText').innerText = `${this.state.score}/${totalQ}`;
-        document.getElementById('xpGainedText').innerText = xpEarned;
+        document.getElementById('xpGainedText').innerText = netXP >= 0 ? `+${netXP}` : netXP;
+        document.getElementById('xpGainedText').style.color = netXP >= 0 ? 'var(--success)' : 'var(--error)';
         
         const icon = document.querySelector('.result-icon');
         if(this.state.score === totalQ) {
